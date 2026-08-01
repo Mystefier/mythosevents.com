@@ -1,0 +1,4 @@
+CREATE TABLE vendors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first VARCHAR(255) NOT NULL
+);

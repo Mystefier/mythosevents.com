@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Jack Frost's Blizzard Machine</title>
+<style>
+  body {
+    margin: 0;
+    background: radial-gradient(circle at center, #142040, #080b16 70%);
+    overflow: hidden;
+    font-family: 'Cinzel', serif;
+    color: #cce7ff;
+  }
+  canvas {
+    display: block;
+  }
+
+  /* Title Banner */
+  #titleBanner {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 42px;
+    color: #cce7ff;
+    text-shadow: 0 0 12px #66aaff, 0 0 24px #99ddff;
+    padding: 20px 0;
+    letter-spacing: 3px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Controls Bar */
+  #controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(10,20,40,0.75);
+    border-top: 3px solid #88b8ff;
+    box-shadow: 0 -4px 12px rgba(0,80,160,0.5);
+    padding: 15px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  /* Knob Containers */
+  .knobBox {
+    position: relative;
+    width: 120px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .knobLabel {
+    margin-bottom: 8px;
+    display: block;
+    text-shadow: 0 0 6px #66aaff;
+  }
+
+  /* Knob */
+  .knob {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 4px solid #aaddff;
+    background: radial-gradient(circle at 30% 30%, #ffffff, #88bbff 60%, #4477cc);
+    box-shadow: 0 0 15px #88cfff, inset 0 0 15px #003366;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .knob:hover {
+    box-shadow: 0 0 20px #c2e9ff, inset 0 0 18px #004080;
+    transform: scale(1.05);
+  }
+
+  .knobIndicator {
+    position: absolute;
+    width: 4px;
+    height: 20px;
+    background: #ffffff;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    box-shadow: 0 0 10px #b5e6ff;
+  }
+</style>
+</head>
+<body>
+
+<div id="titleBanner">JACK FROST'S BLIZZARD MACHINE</div>
+
+<canvas id="snowCanvas"></canvas>
+
+<div id="controls">
+  <div class="knobBox">
+    <span class="knobLabel">Snowflakes: <span id="numLabel">100</span></span>
+    <div class="knob" data-min="10" data-max="500" data-value="100" id="numKnob">
+      <div class="knobIndicator"></div>
+    </div>
+  </div>
+
+  <div class="knobBox">
+    <span class="knobLabel">Size: <span id="sizeLabel">5</span></span>
+    <div class="knob" data-min="1" data-max="20" data-value="5" id="sizeKnob">
+      <div class="knobIndicator"></div>
+    </div>
+  </div>
+
+  <div class="knobBox">
+    <span class="knobLabel">Speed: <span id="speedLabel">2</span></span>
+    <div class="knob" data-min="0.5" data-max="10" data-value="2" id="speedKnob">
+      <div class="knobIndicator"></div>
+    </div>
+  </div>
+
+  <div class="knobBox">
+    <span class="knobLabel">Wind: <span id="windLabel">0</span></span>
+    <div class="knob" data-min="-5" data-max="5" data-value="0" id="windKnob">
+      <div class="knobIndicator"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('snowCanvas');
+const ctx = canvas.getContext('2d');
+let width = window.innerWidth;
+let height = window.innerHeight;
+canvas.width = width;
+canvas.height = height;
+
+// Snowflake sliders for logic (hidden, used by knobs)
+const numSlider = { value: 100 };
+const sizeSlider = { value: 5 };
+const speedSlider = { value: 2 };
+const windSlider = { value: 0 };
+
+const numLabel = document.getElementById('numLabel');
+const sizeLabel = document.getElementById('sizeLabel');
+const speedLabel = document.getElementById('speedLabel');
+const windLabel = document.getElementById('windLabel');
+
+class Snowflake {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * -height;
+    this.size = Math.random() * parseFloat(sizeSlider.value) + 1;
+    this.speed = Math.random() * parseFloat(speedSlider.value) + 1;
+    this.wind = parseFloat(windSlider.value);
+  }
+  update() {
+    this.y += this.speed;
+    this.x += this.wind;
+    if (this.y > height || this.x > width || this.x < 0) { this.reset(); this.y = 0; }
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+  }
+}
+
+let snowflakes = [];
+function createSnowflakes() {
+  snowflakes = [];
+  for (let i=0;i<parseInt(numSlider.value);i++) snowflakes.push(new Snowflake());
+}
+createSnowflakes();
+
+function animate() {
+  ctx.clearRect(0,0,width,height);
+  snowflakes.forEach(s => { s.update(); s.draw(); });
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ❄️ Magical Arcane Knob System ❄️
+function setupKnob(id, callback) {
+  const knob = document.getElementById(id);
+  const indicator = knob.querySelector('.knobIndicator');
+  let min = parseFloat(knob.dataset.min);
+  let max = parseFloat(knob.dataset.max);
+  let value = parseFloat(knob.dataset.value);
+  let angle = ((value - min)/(max-min))*270 - 135;
+  indicator.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  let dragging=false;
+  knob.addEventListener('mousedown',()=>dragging=true);
+  window.addEventListener('mouseup',()=>dragging=false);
+  window.addEventListener('mousemove',e=>{
+    if(!dragging) return;
+    const rect=knob.getBoundingClientRect();
+    const cx=rect.left+rect.width/2;
+    const cy=rect.top+rect.height/2;
+    const dx=e.clientX-cx;
+    const dy=e.clientY-cy;
+    let theta=Math.atan2(dy,dx);
+    let deg=theta*180/Math.PI;
+    let rot=deg+135;
+    if(rot<0) rot=0;
+    if(rot>270) rot=270;
+    indicator.style.transform=`translateX(-50%) rotate(${rot-135}deg)`;
+    let newValue=min+(rot/270)*(max-min);
+    callback(newValue);
+  });
+}
+
+setupKnob("numKnob",v=>{ numSlider.value=v; numLabel.textContent=Math.round(v); createSnowflakes(); });
+setupKnob("sizeKnob",v=>{ sizeSlider.value=v; sizeLabel.textContent=v.toFixed(1); snowflakes.forEach(s=>s.size=Math.random()*v+1); });
+setupKnob("speedKnob",v=>{ speedSlider.value=v; speedLabel.textContent=v.toFixed(1); snowflakes.forEach(s=>s.speed=Math.random()*v+1); });
+setupKnob("windKnob",v=>{ windSlider.value=v; windLabel.textContent=v.toFixed(1); snowflakes.forEach(s=>s.wind=v); });
+
+window.addEventListener('resize',()=>{ width=window.innerWidth; height=window.innerHeight; canvas.width=width; canvas.height=height; createSnowflakes(); });
+</script>
+
+</body>
+</html>
