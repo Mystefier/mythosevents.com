@@ -272,30 +272,6 @@ mysqli_close($conn);
       <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
       <input type="hidden" name="recruiter" value="<?php echo htmlspecialchars($recruiterId); ?>">
 
-      <!-- INVOLVEMENT TYPE -->
-      <div class="form-section">
-        <div class="section-label">How Do You Want to Get Involved?</div>
-        <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Select one primary way you'd like to participate.</p>
-        <div class="checkbox-grid" style="grid-template-columns: 1fr 1fr; gap: 12px;">
-          <label class="checkbox-item" style="cursor: pointer; background: rgba(255,255,255,0.03);">
-            <input type="radio" name="involvementType" value="Talent" required style="accent-color: var(--purple); cursor: pointer;">
-            <span>🎭 Talent (Performer, Artist, etc.)</span>
-          </label>
-          <label class="checkbox-item" style="cursor: pointer; background: rgba(255,255,255,0.03);">
-            <input type="radio" name="involvementType" value="Vendor" style="accent-color: var(--purple); cursor: pointer;">
-            <span>🛖 Vendor</span>
-          </label>
-          <label class="checkbox-item" style="cursor: pointer; background: rgba(255,255,255,0.03);">
-            <input type="radio" name="involvementType" value="Affiliate" style="accent-color: var(--purple); cursor: pointer;">
-            <span>🎟️ Affiliate (Ticket Seller)</span>
-          </label>
-          <label class="checkbox-item" style="cursor: pointer; background: rgba(255,255,255,0.03);">
-            <input type="radio" name="involvementType" value="Organizer" style="accent-color: var(--purple); cursor: pointer;">
-            <span>🗺️ Organizer (Franchise)</span>
-          </label>
-        </div>
-      </div>
-
       <!-- NAME & CONTACT -->
       <div class="form-section">
         <div class="section-label">About You</div>

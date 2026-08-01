@@ -88,8 +88,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $serviceAreaLongitude = isset($_POST["serviceAreaLongitude"]) ? floatval($_POST["serviceAreaLongitude"]) : null;
     $serviceAreaRadius = isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30;
 
-    // Involvement type
-    $involvementType = isset($_POST["involvementType"]) ? mysqli_real_escape_string($conn, $_POST["involvementType"]) : 'Talent';
+    // Involvement type — derived from the selected roles so we don't ask twice
+    $roleToInvolvementType = [
+        'Vendor' => 'Vendor',
+        'Organizer' => 'Organizer',
+        'volunteer' => 'Talent',
+        'Sales' => 'Affiliate',
+        'Performer' => 'Talent',
+        'Artist' => 'Talent',
+        'Operations' => 'Talent',
+        'Other' => 'Talent',
+    ];
+    $selectedRoles = isset($_POST["roles"]) ? $_POST["roles"] : [];
+    $involvementTypes = [];
+    foreach ($selectedRoles as $role) {
+        if (isset($roleToInvolvementType[$role]) && !in_array($roleToInvolvementType[$role], $involvementTypes)) {
+            $involvementTypes[] = $roleToInvolvementType[$role];
+        }
+    }
+    $involvementType = $involvementTypes ? mysqli_real_escape_string($conn, implode(", ", $involvementTypes)) : 'Talent';
 
     // Validate and sanitize the email address
     $email = filter_var($email, FILTER_VALIDATE_EMAIL);
