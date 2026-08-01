@@ -15,6 +15,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./public_html/
           server-dir: ./mythosevents.com/public_html/
+          state-name: .ftp-deploy-state-mythosevents-repo.json
           exclude: |
             **/wp-content/**
             **/wp-admin/**
