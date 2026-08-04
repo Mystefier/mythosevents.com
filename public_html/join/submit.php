@@ -123,6 +123,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Create the link with the ID variable
             $shareLink = "https://mythosevents.com/join/?id=" . $recentlyAddedId;
+            $cardLink = "https://mythosevents.com/card/?id=" . $recentlyAddedId;
 
             // Send email to the submitted address
             $subject = "Confirmation of Submission";
@@ -159,6 +160,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <p>Thank you for applying to our events team! Your information has been successfully submitted. We will reach out to you when we have an event that is a good fit for you.</p>
                         <p>Please share the following link with your friends to invite them to apply and help build our team. If your friends use this link to apply and participate, you will be rewarded:</p>
                         <p><a href='$shareLink'>$shareLink</a></p>
+                        <p>We also made you a digital business card you can print or save as a PDF — handy for sharing your referral link in person:</p>
+                        <p><a href='$cardLink'>$cardLink</a></p>
                         <p>Best regards,<br>Event Team</p>
                     </div>
                 </body>
@@ -177,6 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<p>Your information has been successfully submitted. Thank you for applying to our events team!</p>";
             echo "<p>We need lots more people. Please help us spread the word. Share this link with your friends and we will know if anyone joins from it. We reward people for helping us find talent:</p>";
             echo "<p><a href=\"" . htmlspecialchars($shareLink) . "\">" . htmlspecialchars($shareLink) . "</a></p>";
+            echo "<p>We also made you a digital business card — <a href=\"" . htmlspecialchars($cardLink) . "\">view and print it here</a>.</p>";
             echo "</div>";
         } else {
             echo "<div class='status-icon'>✗</div>";
