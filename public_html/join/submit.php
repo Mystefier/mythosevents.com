@@ -135,47 +135,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $cardLink = "https://mythosevents.com/card/?id=" . $recentlyAddedId;
 
             // Send email to the submitted address
-            $subject = "Confirmation of Submission";
-            $messageBody = "
-                <html>
-                <head>
-                    <style>
-                        body {
-                            font-family: 'Arial', sans-serif;
-                            margin: 20px;
-                            padding: 20px;
-                            background-color: #f5f5f5;
-                        }
-                        .container {
-                            max-width: 600px;
-                            margin: 0 auto;
-                            background-color: #fff;
-                            padding: 20px;
-                            border-radius: 8px;
-                            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                        }
-                        p {
-                            color: #333;
-                            margin-bottom: 15px;
-                        }
-                        a {
-                            color: #4CAF50; /* Green link color */
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class='container'>
-                        <p>Dear $firstName,</p>
-                        <p>Thank you for applying to our events team! Your information has been successfully submitted. We will reach out to you when we have an event that is a good fit for you.</p>
-                        <p>Please share the following link with your friends to invite them to apply and help build our team. If your friends use this link to apply and participate, you will be rewarded:</p>
-                        <p><a href='$shareLink'>$shareLink</a></p>
-                        <p>We also made you a digital business card you can print or save as a PDF — handy for sharing your referral link in person:</p>
-                        <p><a href='$cardLink'>$cardLink</a></p>
-                        <p>Best regards,<br>Event Team</p>
-                    </div>
-                </body>
-                </html>
-            ";
+            $subject = "You're In! Welcome to the Mythos Events Team";
+            $safeFirstName = htmlspecialchars($firstName ?: 'there');
+            $messageBody = '
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Mythos Events</title></head>
+<body style="margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0D0B1A;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;">
+
+        <!-- Header -->
+        <tr>
+          <td align="center" style="padding:40px 0 32px;">
+            <p style="margin:0;font-family:Georgia,serif;font-size:11px;letter-spacing:6px;color:#9B6FD0;text-transform:uppercase;">Welcome to the Team</p>
+            <h1 style="margin:16px 0 0;font-family:Georgia,serif;font-size:42px;font-weight:900;color:#FFFFFF;letter-spacing:2px;text-shadow:none;">Mythos<span style="color:#E8C547;">✦</span>Events</h1>
+          </td>
+        </tr>
+
+        <!-- Card -->
+        <tr>
+          <td style="background-color:#201C32;border:1px solid rgba(107,63,160,0.3);border-radius:14px;padding:48px 48px 40px;">
+
+            <h2 style="margin:0 0 16px;font-family:Georgia,serif;font-size:26px;font-weight:600;color:#FFFFFF;line-height:1.2;">Application Submitted, ' . $safeFirstName . '!</h2>
+            <p style="margin:0 0 24px;font-size:16px;color:#C4A8E8;line-height:1.7;">Thank you for applying to join Mythos Events. Your information has been successfully submitted — we will reach out when there is an event or opportunity that is a good fit for you.</p>
+
+            <!-- Divider -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;">
+              <tr><td style="border-top:1px solid rgba(107,63,160,0.25);"></td></tr>
+            </table>
+
+            <p style="margin:0 0 16px;font-size:16px;color:#C4A8E8;line-height:1.7;">We need lots more people. Share your personal link below — if a friend joins or subscribes through it, you will be rewarded, and it will always be credited to you:</p>
+
+            <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+              <tr>
+                <td align="center" style="background-color:#6B3FA0;border-radius:8px;">
+                  <a href="' . $shareLink . '" style="display:inline-block;padding:16px 40px;font-family:Georgia,serif;font-size:15px;font-weight:700;letter-spacing:3px;color:#FFFFFF;text-decoration:none;text-transform:uppercase;">Your Referral Link ✦</a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:-16px 0 24px;font-size:13px;word-break:break-all;">
+              <a href="' . $shareLink . '" style="color:#9B6FD0;text-decoration:underline;">' . $shareLink . '</a>
+            </p>
+
+            <!-- Divider -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;">
+              <tr><td style="border-top:1px solid rgba(107,63,160,0.25);"></td></tr>
+            </table>
+
+            <p style="margin:0 0 16px;font-size:16px;color:#C4A8E8;line-height:1.7;">We also made you a digital business card you can print or save as a PDF — handy for sharing your referral link in person:</p>
+            <p style="margin:0;font-size:13px;word-break:break-all;">
+              <a href="' . $cardLink . '" style="color:#9B6FD0;text-decoration:underline;">' . $cardLink . '</a>
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding:32px 0 0;">
+            <p style="margin:0 0 8px;font-size:12px;color:rgba(196,168,232,0.4);letter-spacing:2px;text-transform:uppercase;">Mythos Events &nbsp;·&nbsp; Glendale, Arizona</p>
+            <p style="margin:0;font-size:12px;color:rgba(196,168,232,0.3);">Problems? Email <a href="mailto:wade@mythosevents.com" style="color:rgba(196,168,232,0.5);">wade@mythosevents.com</a></p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>';
 
             $headers = "MIME-Version: 1.0" . "\r\n";
             $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";

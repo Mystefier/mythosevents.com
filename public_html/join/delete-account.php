@@ -22,6 +22,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     mysqli_stmt_close($stmt);
 
     if ($user && $user['password'] && password_verify($password . $user['salt'], $user['password'])) {
+        // Auto-adoption: before deleting, grab this person's own recruiter,
+        // then reassign everyone THEY recruited to that same recruiter —
+        // so referral credit passes up the chain instead of disappearing.
+        $recruiterStmt = mysqli_prepare($conn, "SELECT recruiter FROM people WHERE id = ?");
+        mysqli_stmt_bind_param($recruiterStmt, "i", $personId);
+        mysqli_stmt_execute($recruiterStmt);
+        $recruiterResult = mysqli_stmt_get_result($recruiterStmt);
+        $recruiterRow = mysqli_fetch_assoc($recruiterResult);
+        $newRecruiter = $recruiterRow ? intval($recruiterRow['recruiter']) : 1;
+        mysqli_stmt_close($recruiterStmt);
+
+        $adoptStmt = mysqli_prepare($conn, "UPDATE people SET recruiter = ? WHERE recruiter = ?");
+        mysqli_stmt_bind_param($adoptStmt, "ii", $newRecruiter, $personId);
+        mysqli_stmt_execute($adoptStmt);
+        mysqli_stmt_close($adoptStmt);
+
         $delStmt = mysqli_prepare($conn, "DELETE FROM people WHERE id = ?");
         mysqli_stmt_bind_param($delStmt, "i", $personId);
         mysqli_stmt_execute($delStmt);

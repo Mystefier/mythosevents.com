@@ -36,28 +36,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Send confirmation email
                 $subject = "Welcome to Mythos Events";
-                $message = "
-<html>
-<head>
-<meta charset='UTF-8'>
-<style>
-body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
-.container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-h1 { color: #6B3FA0; }
-p { color: #333; line-height: 1.6; }
-a { color: #6B3FA0; text-decoration: none; }
-</style>
-</head>
-<body>
-<div class='container'>
-<h1>Welcome to Mythos Events</h1>
-<p>Hi $firstName,</p>
-<p>Thank you for subscribing to Mythos Events! You'll now receive updates about upcoming festivals, events, and opportunities to get involved.</p>
-<p>If you'd like to join our talent pool, become a vendor, or explore other ways to participate, you can always update your preferences later.</p>
-<p>Best regards,<br>The Mythos Events Team</p>
-</div>
+                $safeFirstName = htmlspecialchars($firstName ?: 'there');
+                $message = '
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Mythos Events</title></head>
+<body style="margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0D0B1A;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;">
+
+        <!-- Header -->
+        <tr>
+          <td align="center" style="padding:40px 0 32px;">
+            <p style="margin:0;font-family:Georgia,serif;font-size:11px;letter-spacing:6px;color:#9B6FD0;text-transform:uppercase;">You Are Subscribed</p>
+            <h1 style="margin:16px 0 0;font-family:Georgia,serif;font-size:42px;font-weight:900;color:#FFFFFF;letter-spacing:2px;text-shadow:none;">Mythos<span style="color:#E8C547;">✦</span>Events</h1>
+          </td>
+        </tr>
+
+        <!-- Card -->
+        <tr>
+          <td style="background-color:#201C32;border:1px solid rgba(107,63,160,0.3);border-radius:14px;padding:48px 48px 40px;">
+
+            <h2 style="margin:0 0 16px;font-family:Georgia,serif;font-size:26px;font-weight:600;color:#FFFFFF;line-height:1.2;">Welcome, ' . $safeFirstName . '!</h2>
+            <p style="margin:0 0 20px;font-size:16px;color:#C4A8E8;line-height:1.7;">Thank you for subscribing to Mythos Events. You will now receive updates about upcoming festivals, events, and opportunities to get involved.</p>
+            <p style="margin:0;font-size:16px;color:#C4A8E8;line-height:1.7;">If you would like to join our talent pool, become a vendor, or explore other ways to participate, you can apply any time.</p>
+
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding:32px 0 0;">
+            <p style="margin:0 0 8px;font-size:12px;color:rgba(196,168,232,0.4);letter-spacing:2px;text-transform:uppercase;">Mythos Events &nbsp;·&nbsp; Glendale, Arizona</p>
+            <p style="margin:0;font-size:12px;color:rgba(196,168,232,0.3);">Problems? Email <a href="mailto:wade@mythosevents.com" style="color:rgba(196,168,232,0.5);">wade@mythosevents.com</a></p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
 </body>
-</html>";
+</html>';
 
                 $headers = "MIME-Version: 1.0\r\n";
                 $headers .= "Content-type: text/html; charset=UTF-8\r\n";
