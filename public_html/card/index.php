@@ -15,7 +15,7 @@ mysqli_close($conn);
 
 $referralLink = $person ? "https://mythosevents.com/?id=" . $person['id'] : '';
 $qrUrl = $referralLink ? "https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=" . urlencode($referralLink) : '';
-$roleTitle = $person && $person['roles'] ? str_replace(',', ' · ', $person['roles']) : 'Mythos Events';
+$roleTitle = $person && $person['roles'] ? implode(' · ', array_map('trim', explode(',', $person['roles']))) : 'Mythos Events';
 ?>
 <!DOCTYPE html>
 <html lang="en">
