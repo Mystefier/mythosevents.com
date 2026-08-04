@@ -519,6 +519,22 @@
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 60);
   });
+
+  // Affiliate/referral tracking — carry ?id= through to the join form
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    let affId = params.get('id');
+    if (affId && /^\d+$/.test(affId)) {
+      sessionStorage.setItem('mythos_ref_id', affId);
+    } else {
+      affId = sessionStorage.getItem('mythos_ref_id');
+    }
+    if (affId && /^\d+$/.test(affId)) {
+      document.querySelectorAll('a[href="/join/"]').forEach(a => {
+        a.href = '/join/?id=' + encodeURIComponent(affId);
+      });
+    }
+  })();
 </script>
 </body>
 </html>
