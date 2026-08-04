@@ -290,6 +290,7 @@ $id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : null;
           <button type="submit" class="submit-btn">Send My Confirmation ✦</button>
         </form>
         <p class="form-note">We'll send you a link to complete your profile. No spam, ever.</p>
+        <p class="form-note">Already a member? <a href="login.php" style="color: var(--purple-lt);">Log in</a></p>
       </div>
 
       <div class="scroll-hint">

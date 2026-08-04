@@ -1,34 +1,70 @@
 <?php
+session_start();
+if (!isset($_SESSION['person_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
 // Open the database
 $dbname = "db9dh4gg0yfw3q";
 include('logintodatabase.php');
 
+$personId = intval($_SESSION['person_id']);
 $statusType = 'error';
 $status = 'Invalid request. Please submit the form.';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve information from the form
-    $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
-    $firstName = $_POST["firstName"];
-    $lastName = $_POST["lastName"];
-    $phoneNumber = $_POST["phoneNumber"];
-    $dob = $_POST["dob"];
-    $message = $_POST["message"];
-    $roles = $_POST["roles"];
-    $recruiter = $_POST["recruiter"];
-    $description = $_POST["description"];
-    $website = $_POST["website"];
+    $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : '';
+    $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : '';
+    $phoneNumber = isset($_POST["phoneNumber"]) ? $_POST["phoneNumber"] : '';
+    $dob = isset($_POST["dob"]) ? $_POST["dob"] : null;
+    $message = isset($_POST["message"]) ? $_POST["message"] : '';
+    $description = isset($_POST["description"]) ? $_POST["description"] : '';
+    $website = isset($_POST["website"]) ? $_POST["website"] : '';
+    $roles = isset($_POST["roles"]) ? implode(", ", $_POST["roles"]) : '';
 
-    // Update the record in the people table
-    $updateSql = "UPDATE people SET first = '$firstName', last = '$lastName', phone = '$phoneNumber', dob = '$dob', message = '$message', roles = '$roles', recruiter = '$recruiter', description = '$description', website = '$website' WHERE email = '$email'";
+    $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? $_POST["serviceAreaAddress"] : '';
+    $serviceAreaLatitude = isset($_POST["serviceAreaLatitude"]) && $_POST["serviceAreaLatitude"] !== '' ? floatval($_POST["serviceAreaLatitude"]) : null;
+    $serviceAreaLongitude = isset($_POST["serviceAreaLongitude"]) && $_POST["serviceAreaLongitude"] !== '' ? floatval($_POST["serviceAreaLongitude"]) : null;
+    $serviceAreaRadius = isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30;
 
-    if (mysqli_query($conn, $updateSql)) {
+    // Derive involvement type from roles, same mapping used at signup
+    $roleToInvolvementType = [
+        'Vendor' => 'Vendor',
+        'Organizer' => 'Organizer',
+        'volunteer' => 'Talent',
+        'Sales' => 'Affiliate',
+        'Performer' => 'Talent',
+        'Artist' => 'Talent',
+        'Operations' => 'Talent',
+        'Other' => 'Talent',
+    ];
+    $selectedRoles = isset($_POST["roles"]) ? $_POST["roles"] : [];
+    $involvementTypes = [];
+    foreach ($selectedRoles as $role) {
+        if (isset($roleToInvolvementType[$role]) && !in_array($roleToInvolvementType[$role], $involvementTypes)) {
+            $involvementTypes[] = $roleToInvolvementType[$role];
+        }
+    }
+    $involvementType = $involvementTypes ? implode(", ", $involvementTypes) : 'Talent';
+
+    $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ? WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $updateSql);
+    mysqli_stmt_bind_param(
+        $stmt,
+        "sssssssssddisi",
+        $firstName, $lastName, $phoneNumber, $dob, $message, $roles, $description, $website,
+        $serviceAreaAddress, $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType, $personId
+    );
+
+    if (mysqli_stmt_execute($stmt)) {
         $statusType = 'success';
         $status = 'Your profile has been updated successfully.';
     } else {
         $statusType = 'error';
-        $status = 'Error updating record: ' . mysqli_error($conn);
+        $status = 'Something went wrong updating your profile. Please try again.';
     }
+    mysqli_stmt_close($stmt);
 }
 
 mysqli_close($conn);
@@ -100,7 +136,7 @@ mysqli_close($conn);
 
 <nav>
   <a href="/" class="nav-logo">Mythos<span>✦</span>Events</a>
-  <a href="/" class="nav-back">← Back to Home</a>
+  <a href="dashboard.php" class="nav-back">← Back to Dashboard</a>
 </nav>
 
 <main>
@@ -110,7 +146,7 @@ mysqli_close($conn);
     <div class="status-card <?php echo $statusType; ?>">
       <p><?php echo htmlspecialchars($status); ?></p>
     </div>
-    <a href="login.php" class="btn-primary">Back to Login ✦</a>
+    <a href="dashboard.php" class="btn-primary">Back to Dashboard ✦</a>
   </div>
 </main>
 
