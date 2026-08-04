@@ -1,66 +1,18 @@
 <?php
+session_start();
+
 // Include code to open the database
 $dbname = "db9dh4gg0yfw3q";
 include('logintodatabase.php');
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Application Submitted — Mythos Events</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --midnight:   #0D0B1A;
-    --card:       #201C32;
-    --purple:     #6B3FA0;
-    --purple-lt:  #9B6FD0;
-    --purple-dim: rgba(107,63,160,0.25);
-    --gold:       #E8C547;
-    --gold-dim:   rgba(232,197,71,0.15);
-    --lilac:      #C4A8E8;
-    --white:      #FFFFFF;
-    --muted:      rgba(196,168,232,0.6);
-    --green:      #52C87A;
-  }
-  body {
-    background: var(--midnight); color: var(--lilac);
-    font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.75;
-    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 40px 20px; overflow-x: hidden; position: relative;
-  }
-  #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .star { position: absolute; border-radius: 50%; background: #fff; animation: twinkle var(--dur) ease-in-out infinite var(--delay); }
-  @keyframes twinkle { 0%,100% { opacity: 0.1; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.5); } }
-  .content { position: relative; z-index: 1; width: 100%; max-width: 560px; text-align: center; }
-  .status-icon { font-size: 52px; margin-bottom: 20px; }
-  h1 {
-    font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(26px, 5vw, 36px);
-    color: var(--white); margin-bottom: 12px;
-    text-shadow: 0 0 40px rgba(107,63,160,0.7);
-  }
-  .container {
-    background: var(--card); border: 1px solid var(--purple-dim); border-radius: 14px;
-    padding: 32px 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); text-align: left;
-  }
-  p { font-size: 15px; color: var(--lilac); line-height: 1.7; margin-bottom: 16px; }
-  p:last-child { margin-bottom: 0; }
-  a { color: var(--purple-lt); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .success-container { border: 1px solid rgba(82,200,122,0.4); }
-  .error-container { border: 1px solid rgba(220,80,80,0.4); }
-</style>
-</head>
-<body>
+// Function to generate a random salt
+function generateSalt() {
+    return bin2hex(random_bytes(16));
+}
 
-<div id="stars"></div>
+$statusType = '';
+$statusMessage = '';
 
-<div class="content">
-
-<?php
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve data from the form
@@ -129,6 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (mysqli_stmt_execute($stmt)) {
             // Retrieve the ID of the recently added record
             $recentlyAddedId = mysqli_insert_id($conn);
+            mysqli_stmt_close($stmt);
 
             // Create the link with the ID variable
             $shareLink = "https://mythosevents.com/join/?id=" . $recentlyAddedId;
@@ -213,45 +166,92 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             mail($email, $subject, $messageBody, $headers);
 
-            echo "<div class='status-icon'>✦</div>";
-            echo "<h1>Application Submitted</h1>";
-            echo "<div class='container success-container'>";
-            echo "<p>Your information has been successfully submitted. Thank you for applying to our events team!</p>";
-            echo "<p>We need lots more people. Please help us spread the word. Share this link with your friends and we will know if anyone joins from it. We reward people for helping us find talent:</p>";
-            echo "<p><a href=\"" . htmlspecialchars($shareLink) . "\">" . htmlspecialchars($shareLink) . "</a></p>";
-            echo "<p>We also made you a digital business card — <a href=\"" . htmlspecialchars($cardLink) . "\">view and print it here</a>.</p>";
-            echo "</div>";
-            mysqli_stmt_close($stmt);
+            mysqli_close($conn);
+
+            // Auto-login: they just proved they own this account by setting its
+            // password moments ago, so send them straight to their dashboard
+            // instead of making them log in again right away.
+            session_regenerate_id(true);
+            $_SESSION['person_id'] = $recentlyAddedId;
+            header("Location: dashboard.php?welcome=1");
+            exit();
         } else {
             mysqli_stmt_close($stmt);
-            echo "<div class='status-icon'>✗</div>";
-            echo "<h1>Submission Failed</h1>";
-            echo "<div class='container error-container'>";
-            echo "<p>Oops! Something went wrong while adding your information. Please try again later.</p>";
-            echo "</div>";
+            $statusType = 'error';
+            $statusMessage = 'Oops! Something went wrong while adding your information. Please try again later.';
         }
     } else {
-        echo "<div class='status-icon'>✗</div>";
-        echo "<h1>Invalid Email</h1>";
-        echo "<div class='container error-container'>";
-        echo "<p>Invalid email address. Please enter a valid email.</p>";
-        echo "</div>";
+        $statusType = 'error';
+        $statusMessage = 'Invalid email address. Please enter a valid email.';
     }
+
+    mysqli_close($conn);
 } else {
     // Redirect to the main page if accessed directly without form submission
     header("Location: index.php");
     exit();
 }
-
-// Close the database connection
-mysqli_close($conn);
-
-// Function to generate a random salt
-function generateSalt() {
-    return bin2hex(random_bytes(16));
-}
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submission Error — Mythos Events</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --midnight:   #0D0B1A;
+    --card:       #201C32;
+    --purple:     #6B3FA0;
+    --purple-lt:  #9B6FD0;
+    --purple-dim: rgba(107,63,160,0.25);
+    --gold:       #E8C547;
+    --gold-dim:   rgba(232,197,71,0.15);
+    --lilac:      #C4A8E8;
+    --white:      #FFFFFF;
+    --muted:      rgba(196,168,232,0.6);
+    --green:      #52C87A;
+  }
+  body {
+    background: var(--midnight); color: var(--lilac);
+    font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.75;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px; overflow-x: hidden; position: relative;
+  }
+  #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .star { position: absolute; border-radius: 50%; background: #fff; animation: twinkle var(--dur) ease-in-out infinite var(--delay); }
+  @keyframes twinkle { 0%,100% { opacity: 0.1; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.5); } }
+  .content { position: relative; z-index: 1; width: 100%; max-width: 560px; text-align: center; }
+  .status-icon { font-size: 52px; margin-bottom: 20px; }
+  h1 {
+    font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(26px, 5vw, 36px);
+    color: var(--white); margin-bottom: 12px;
+    text-shadow: 0 0 40px rgba(107,63,160,0.7);
+  }
+  .container {
+    background: var(--card); border: 1px solid var(--purple-dim); border-radius: 14px;
+    padding: 32px 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); text-align: left;
+  }
+  p { font-size: 15px; color: var(--lilac); line-height: 1.7; margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+  a { color: var(--purple-lt); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .error-container { border: 1px solid rgba(220,80,80,0.4); }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="content">
+  <div class="status-icon">✗</div>
+  <h1><?php echo $statusMessage && strpos($statusMessage, 'Invalid email') === 0 ? 'Invalid Email' : 'Submission Failed'; ?></h1>
+  <div class="container error-container">
+    <p><?php echo htmlspecialchars($statusMessage); ?></p>
+  </div>
 </div>
 
 <script>

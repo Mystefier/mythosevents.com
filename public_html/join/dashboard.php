@@ -28,6 +28,7 @@ mysqli_close($conn);
 $referralLink = "https://mythosevents.com/?id=" . $person['id'];
 $cardLink = "https://mythosevents.com/card/?id=" . $person['id'];
 $rolesList = $person['roles'] ? array_map('trim', explode(',', $person['roles'])) : [];
+$isWelcome = isset($_GET['welcome']) && $_GET['welcome'] == '1';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,6 +79,14 @@ $rolesList = $person['roles'] ? array_map('trim', explode(',', $person['roles'])
     color: var(--white); text-shadow: 0 0 40px rgba(107,63,160,0.7);
   }
 
+  .welcome-card {
+    background: var(--card); border: 1px solid rgba(82,200,122,0.4);
+    border-radius: 14px; padding: 28px 32px; margin-bottom: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .welcome-card .status-icon { font-size: 32px; margin-bottom: 10px; }
+  .welcome-card h2 { font-family: 'Cinzel', serif; font-size: 17px; color: var(--white); margin-bottom: 10px; }
+  .welcome-card p { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 0; }
   .card {
     background: var(--card); border: 1px solid var(--purple-dim);
     border-radius: 14px; padding: 32px; margin-bottom: 24px;
@@ -137,9 +146,17 @@ $rolesList = $person['roles'] ? array_map('trim', explode(',', $person['roles'])
 
 <main>
   <div class="page-header">
-    <div class="eyebrow">Welcome Back</div>
+    <div class="eyebrow"><?php echo $isWelcome ? "You're All Set" : "Welcome Back"; ?></div>
     <h1><?php echo htmlspecialchars($person['first']); ?>'s Dashboard</h1>
   </div>
+
+  <?php if ($isWelcome): ?>
+  <div class="welcome-card">
+    <div class="status-icon">✦</div>
+    <h2>Application Submitted!</h2>
+    <p>Thanks for joining Mythos Events — we've sent a confirmation to your email. We'll reach out when there's an event or opportunity that's a good fit. In the meantime, everything below is yours: your referral link, your business card, and your profile whenever you want to update it.</p>
+  </div>
+  <?php endif; ?>
 
   <div class="card">
     <h2>Your Info</h2>
