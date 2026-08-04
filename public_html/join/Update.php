@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : '';
     $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : '';
     $phoneNumber = isset($_POST["phoneNumber"]) ? $_POST["phoneNumber"] : '';
-    $dob = isset($_POST["dob"]) ? $_POST["dob"] : null;
+    $dob = isset($_POST["dob"]) && $_POST["dob"] !== '' ? $_POST["dob"] : null;
     $message = isset($_POST["message"]) ? $_POST["message"] : '';
     $description = isset($_POST["description"]) ? $_POST["description"] : '';
     $website = isset($_POST["website"]) ? $_POST["website"] : '';
@@ -37,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'Performer' => 'Talent',
         'Artist' => 'Talent',
         'Operations' => 'Talent',
+        'Venue Manager/Owner' => 'Venue',
         'Other' => 'Talent',
     ];
     $selectedRoles = isset($_POST["roles"]) ? $_POST["roles"] : [];

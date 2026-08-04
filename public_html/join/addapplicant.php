@@ -293,8 +293,9 @@ mysqli_close($conn);
             <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(555) 000-0000">
           </div>
           <div class="field">
-            <label for="dob">Date of Birth</label>
-            <input type="date" id="dob" name="dob" required>
+            <label for="dob">Date of Birth <span class="label-optional">optional</span></label>
+            <input type="date" id="dob" name="dob">
+            <p style="font-size:12px;color:var(--muted);margin-top:6px;">Helps us verify age requirements for venues and stay compliant with minor-related regulations.</p>
           </div>
         </div>
       </div>
@@ -347,6 +348,10 @@ mysqli_close($conn);
           <label class="checkbox-item">
             <input type="checkbox" name="roles[]" value="Operations">
             <span>⚙️ Operations</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="roles[]" value="Venue Manager/Owner">
+            <span>🏛️ Venue Manager/Owner</span>
           </label>
           <label class="checkbox-item">
             <input type="checkbox" name="roles[]" value="Other">

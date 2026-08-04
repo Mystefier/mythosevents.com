@@ -80,6 +80,7 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
   .field:last-child { margin-bottom: 0; }
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   label { display: block; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.15em; color: var(--purple-lt); margin-bottom: 8px; }
+  .label-optional { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--muted); letter-spacing: 0; margin-left: 6px; font-style: italic; }
   input[type="text"], input[type="tel"], input[type="date"], input[type="url"], textarea {
     width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--purple-dim);
     border-radius: 8px; padding: 13px 16px; font-size: 15px; font-family: 'Inter', sans-serif;
@@ -155,8 +156,9 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
           <input type="tel" id="phoneNumber" name="phoneNumber" value="<?php echo htmlspecialchars($person['phone']); ?>">
         </div>
         <div class="field">
-          <label for="dob">Date of Birth</label>
+          <label for="dob">Date of Birth <span class="label-optional">optional</span></label>
           <input type="date" id="dob" name="dob" value="<?php echo htmlspecialchars($person['dob']); ?>">
+          <p style="font-size:12px;color:var(--muted);margin-top:6px;">Helps us verify age requirements for venues and stay compliant with minor-related regulations.</p>
         </div>
       </div>
 
@@ -170,6 +172,7 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Performer" <?php echo in_array('Performer', $selectedRoles) ? 'checked' : ''; ?>><span>🎭 Performer</span></label>
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Artist" <?php echo in_array('Artist', $selectedRoles) ? 'checked' : ''; ?>><span>🎨 Artist</span></label>
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Operations" <?php echo in_array('Operations', $selectedRoles) ? 'checked' : ''; ?>><span>⚙️ Operations</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Venue Manager/Owner" <?php echo in_array('Venue Manager/Owner', $selectedRoles) ? 'checked' : ''; ?>><span>🏛️ Venue Manager/Owner</span></label>
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Other" <?php echo in_array('Other', $selectedRoles) ? 'checked' : ''; ?>><span>✨ Something Else</span></label>
         </div>
       </div>

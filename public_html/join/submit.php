@@ -65,25 +65,25 @@ include('logintodatabase.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve data from the form
     $email = isset($_POST["email"]) ? filter_var($_POST["email"], FILTER_SANITIZE_EMAIL) : '';
-    $firstName = isset($_POST["firstName"]) ? mysqli_real_escape_string($conn, $_POST["firstName"]) : '';
-    $lastName = isset($_POST["lastName"]) ? mysqli_real_escape_string($conn, $_POST["lastName"]) : '';
-    $phoneNumber = isset($_POST["phoneNumber"]) ? mysqli_real_escape_string($conn, $_POST["phoneNumber"]) : '';
+    $firstName = isset($_POST["firstName"]) ? $_POST["firstName"] : '';
+    $lastName = isset($_POST["lastName"]) ? $_POST["lastName"] : '';
+    $phoneNumber = isset($_POST["phoneNumber"]) ? $_POST["phoneNumber"] : '';
     $roles = isset($_POST["roles"]) ? implode(", ", $_POST["roles"]) : '';
-    $description = isset($_POST["description"]) ? mysqli_real_escape_string($conn, $_POST["description"]) : '';
-    $website = isset($_POST["website"]) ? mysqli_real_escape_string($conn, $_POST["website"]) : '';
+    $description = isset($_POST["description"]) ? $_POST["description"] : '';
+    $website = isset($_POST["website"]) ? $_POST["website"] : '';
     $recruiter = isset($_POST["recruiter"]) ? $_POST["recruiter"] : '';
 
     // Additional fields for password and DOB
-    $dob = isset($_POST["dob"]) ? $_POST["dob"] : '';
+    $dob = isset($_POST["dob"]) && $_POST["dob"] !== '' ? $_POST["dob"] : null;
     $password = isset($_POST["password"]) ? $_POST["password"] : '';
     $salt = generateSalt();
     $hashedPassword = password_hash($password . $salt, PASSWORD_DEFAULT);
 
     // Message field
-    $message = isset($_POST["message"]) ? mysqli_real_escape_string($conn, $_POST["message"]) : '';
+    $message = isset($_POST["message"]) ? $_POST["message"] : '';
 
     // Service area fields
-    $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? mysqli_real_escape_string($conn, $_POST["serviceAreaAddress"]) : '';
+    $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? $_POST["serviceAreaAddress"] : '';
     $serviceAreaLatitude = isset($_POST["serviceAreaLatitude"]) ? floatval($_POST["serviceAreaLatitude"]) : null;
     $serviceAreaLongitude = isset($_POST["serviceAreaLongitude"]) ? floatval($_POST["serviceAreaLongitude"]) : null;
     $serviceAreaRadius = isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30;
@@ -97,6 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'Performer' => 'Talent',
         'Artist' => 'Talent',
         'Operations' => 'Talent',
+        'Venue Manager/Owner' => 'Venue',
         'Other' => 'Talent',
     ];
     $selectedRoles = isset($_POST["roles"]) ? $_POST["roles"] : [];
@@ -106,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $involvementTypes[] = $roleToInvolvementType[$role];
         }
     }
-    $involvementType = $involvementTypes ? mysqli_real_escape_string($conn, implode(", ", $involvementTypes)) : 'Talent';
+    $involvementType = $involvementTypes ? implode(", ", $involvementTypes) : 'Talent';
 
     // Validate and sanitize the email address
     $email = filter_var($email, FILTER_VALIDATE_EMAIL);
@@ -115,9 +116,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($email) {
         // Insert data into the "people" table
         $insertSql = "INSERT INTO people (email, first, last, phone, roles, description, website, recruiter, dob, password, salt, message, service_area_address, service_area_latitude, service_area_longitude, service_area_radius_miles, involvement_type)
-                      VALUES ('$email', '$firstName', '$lastName', '$phoneNumber', '$roles', '$description', '$website', '$recruiter', '$dob', '$hashedPassword', '$salt', '$message', '$serviceAreaAddress', $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, '$involvementType')";
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $insertSql);
+        mysqli_stmt_bind_param(
+            $stmt,
+            "sssssssssssssddis",
+            $email, $firstName, $lastName, $phoneNumber, $roles, $description, $website, $recruiter,
+            $dob, $hashedPassword, $salt, $message, $serviceAreaAddress,
+            $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType
+        );
 
-        if (mysqli_query($conn, $insertSql)) {
+        if (mysqli_stmt_execute($stmt)) {
             // Retrieve the ID of the recently added record
             $recentlyAddedId = mysqli_insert_id($conn);
 
@@ -182,7 +191,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<p><a href=\"" . htmlspecialchars($shareLink) . "\">" . htmlspecialchars($shareLink) . "</a></p>";
             echo "<p>We also made you a digital business card — <a href=\"" . htmlspecialchars($cardLink) . "\">view and print it here</a>.</p>";
             echo "</div>";
+            mysqli_stmt_close($stmt);
         } else {
+            mysqli_stmt_close($stmt);
             echo "<div class='status-icon'>✗</div>";
             echo "<h1>Submission Failed</h1>";
             echo "<div class='container error-container'>";
