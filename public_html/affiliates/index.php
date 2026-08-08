@@ -204,6 +204,22 @@
     s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s`;
     container.appendChild(s);
   }
+
+  // Affiliate/referral tracking — carry ?id= through to the join form
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    let affId = params.get('id');
+    if (affId && /^\d+$/.test(affId)) {
+      sessionStorage.setItem('mythos_ref_id', affId);
+    } else {
+      affId = sessionStorage.getItem('mythos_ref_id');
+    }
+    if (affId && /^\d+$/.test(affId)) {
+      document.querySelectorAll('a[href="/join/"]').forEach(a => {
+        a.href = '/join/?id=' + encodeURIComponent(affId);
+      });
+    }
+  })();
 </script>
 </body>
 </html>
