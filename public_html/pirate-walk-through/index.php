@@ -291,22 +291,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="about-wrap">
       <div class="section-title">A Safer, More Magical Halloween</div>
       <p>Trunk or Treat is a free, less-scary alternative to trick-or-treating — cotton candy, a playground, and cars full of candy for families in the community. The Pirate Walk Through adds an immersive, story-driven attraction to the night: sets, characters, and an experience kids and families won't forget.</p>
+      <p style="margin-top: 20px;">This isn't a one-off idea — the Pirate Walk Through has been part of Horizons Community Church's Trunk or Treat for several years running, always on Halloween night. It's happening again this year, which makes it the soonest, most reliable way to get involved with Mythos Events and see what we're building firsthand.</p>
     </div>
   </div>
 
   <div class="involved-section">
     <div class="involved-wrap">
       <div class="section-title">We Need Your Help</div>
+      <p style="text-align: center; max-width: 600px; margin: 0 auto; font-size: 15px; color: var(--muted); line-height: 1.8;">No experience necessary for either role — just show up ready to help. This is a great low-pressure way to get a feel for working with Mythos Events before committing to anything bigger.</p>
       <div class="involved-grid">
         <div class="involved-card">
           <div class="involved-icon">🔨</div>
           <h3>Build Crew</h3>
-          <p>Help design and build the sets, props, and decor that bring the walk-through to life before Halloween night. No experience required — just willingness to get hands-on.</p>
+          <p>Help design and build the sets, props, and decor that bring the walk-through to life before Halloween night — carpentry, painting, prop-making, set dressing, and general hands-on problem solving. Work happens in the weeks leading up to October 31st, and you can pitch in as much or as little time as you're able.</p>
         </div>
         <div class="involved-card">
           <div class="involved-icon">🏴‍☠️</div>
           <h3>Performers</h3>
-          <p>Play a pirate character and bring the walk-through to life for families on the night of October 31st. Performers, improvisers, and anyone who loves a good costume welcome.</p>
+          <p>Play a pirate character and bring the walk-through to life for families on the night of October 31st. Stay in character, improvise with kids, and help create an experience people remember. Performers, improvisers, cosplayers, and anyone who loves a good costume are all welcome — this is a fun, family-friendly crowd, not a haunted house.</p>
         </div>
       </div>
     </div>

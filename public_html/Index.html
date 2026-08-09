@@ -176,6 +176,31 @@
     font-weight: 400; line-height: 1.5; font-style: italic; margin: 0;
   }
 
+  /* ── FEATURED EVENT ── */
+  .featured-event {
+    background: linear-gradient(135deg, rgba(232,197,71,0.08), rgba(107,63,160,0.1));
+    border: 1px solid rgba(232,197,71,0.4);
+    border-radius: 16px; padding: 48px 44px;
+    margin-bottom: 56px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .featured-badge {
+    display: inline-block; font-family: 'Cinzel Decorative', serif; font-size: 11px;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+    background: var(--gold-dim); border: 1px solid rgba(232,197,71,0.4);
+    padding: 8px 22px; border-radius: 999px; margin-bottom: 22px;
+  }
+  .featured-event h2 {
+    font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(28px, 4.5vw, 42px);
+    color: var(--white); margin-bottom: 12px; text-shadow: 0 0 40px rgba(107,63,160,0.7);
+  }
+  .featured-tagline {
+    font-size: 14px; color: var(--gold); letter-spacing: 0.05em; margin-bottom: 22px;
+  }
+  .featured-desc {
+    max-width: 640px; margin: 0 auto 30px; font-size: 15px; color: var(--muted); line-height: 1.8;
+  }
+
   /* ── EVENTS ── */
   .events-intro { max-width: 640px; margin-bottom: 52px; }
   .event-card {
@@ -363,6 +388,16 @@
 <!-- EVENTS -->
 <section id="events">
   <div class="wrap">
+
+    <!-- FEATURED: Pirate Walk Through -->
+    <div class="featured-event reveal">
+      <div class="featured-badge">🏴‍☠️ Happening This October</div>
+      <h2>The Pirate Walk Through</h2>
+      <div class="featured-tagline">Trunk or Treat at Horizons Community Church &nbsp;·&nbsp; Sat, Oct 31 &nbsp;·&nbsp; 6:00 PM &nbsp;·&nbsp; Peoria, AZ</div>
+      <p class="featured-desc">Our soonest event — and the fastest way to see what Mythos Events is about. This immersive pirate walk-through has been part of Horizons Community Church's free, family-friendly Trunk or Treat for several years running, always on Halloween night. We're recruiting a build crew to help construct it and performers to bring it to life on the night itself.</p>
+      <a href="/pirate-walk-through/" class="btn-primary">Get Involved ✦</a>
+    </div>
+
     <div class="reveal">
       <div class="eyebrow">Upcoming Events</div>
       <h2>The 2027–2028 Season</h2>
