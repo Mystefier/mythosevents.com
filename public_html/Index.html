@@ -70,6 +70,37 @@
   }
   .nav-cta:hover { background: var(--purple-lt) !important; color: var(--white) !important; }
 
+  /* ── NAV HOVER FORMS (Log In / Subscribe) ── */
+  .nav-hover { position: relative; }
+  .nav-hover-panel {
+    display: none; position: absolute; top: 100%; right: 0; padding-top: 14px; z-index: 50;
+  }
+  .nav-hover:hover .nav-hover-panel,
+  .nav-hover:focus-within .nav-hover-panel { display: block; }
+  .nav-hover-panel-inner {
+    background: var(--card); border: 1px solid var(--purple-dim); border-radius: 10px;
+    padding: 20px; width: 240px; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  .nav-hover-panel input {
+    width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--purple-dim);
+    border-radius: 6px; padding: 10px 12px; font-size: 13px; font-family: 'Inter', sans-serif;
+    color: var(--white); outline: none; margin-bottom: 10px; box-sizing: border-box;
+  }
+  .nav-hover-panel input:focus { border-color: var(--purple-lt); }
+  .nav-hover-panel input::placeholder { color: var(--muted); }
+  .nav-hover-panel button {
+    width: 100%; background: var(--purple); color: var(--white);
+    font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.1em;
+    padding: 11px; border: none; border-radius: 6px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-hover-panel button:hover { background: var(--purple-lt); }
+  .nav-hover-panel .hover-link {
+    display: block; text-align: center; margin-top: 10px; font-size: 11px;
+    color: var(--muted) !important; text-decoration: none;
+  }
+  .nav-hover-panel .hover-link:hover { color: var(--white) !important; }
+
   /* ── HERO ── */
   .hero {
     position: relative; min-height: 100vh;
@@ -331,8 +362,31 @@
   <div class="nav-links">
     <a href="#about">About</a>
     <a href="#events">Events</a>
-    <a href="/subscribe/">Subscribe</a>
-    <a href="/join/login.php">Log In</a>
+    <div class="nav-hover">
+      <a href="/subscribe/">Subscribe</a>
+      <div class="nav-hover-panel">
+        <div class="nav-hover-panel-inner">
+          <form action="/subscribe/" method="post">
+            <input type="text" name="firstName" placeholder="First name (optional)">
+            <input type="email" name="email" placeholder="Email address" required>
+            <button type="submit">Subscribe ✦</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="nav-hover" id="nav-login-hover">
+      <a href="/join/login.php">Log In</a>
+      <div class="nav-hover-panel">
+        <div class="nav-hover-panel-inner">
+          <form action="/join/LoginProcess.php" method="post">
+            <input type="email" name="email" placeholder="Email address" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Log In ✦</button>
+            <a href="/join/ForgotPassword.php" class="hover-link">Forgot Password?</a>
+          </form>
+        </div>
+      </div>
+    </div>
     <a href="/join/" class="nav-cta">Get Involved</a>
   </div>
 </nav>
@@ -394,7 +448,7 @@
       <div class="featured-badge">🏴‍☠️ Happening This October</div>
       <h2>The Pirate Walk Through</h2>
       <div class="featured-tagline">Trunk or Treat at Horizons Community Church &nbsp;·&nbsp; Sat, Oct 31 &nbsp;·&nbsp; 6:00 PM &nbsp;·&nbsp; Peoria, AZ</div>
-      <p class="featured-desc">Our soonest event — and the fastest way to see what Mythos Events is about. This immersive pirate walk-through has been part of Horizons Community Church's free, family-friendly Trunk or Treat for several years running, always on Halloween night. We're recruiting a build crew to help construct it and performers to bring it to life on the night itself.</p>
+      <p class="featured-desc">An immersive pirate walk-through, part of Horizons Community Church's free Trunk or Treat for several years running. We're recruiting a build crew and performers.</p>
       <a href="/pirate-walk-through/" class="btn-primary">Get Involved ✦</a>
     </div>
 
