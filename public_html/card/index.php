@@ -122,13 +122,20 @@ $roleTitle = $person && $person['roles'] ? implode(' · ', array_map('trim', exp
   footer a { color: var(--muted); text-decoration: none; }
 
   @media print {
-    body * { visibility: hidden; }
-    #printable-card, #printable-card * { visibility: visible; }
-    #printable-card {
-      position: absolute; top: 0; left: 0; margin: 0;
-      box-shadow: none; border: none;
-    }
     @page { size: 3.5in 2in; margin: 0; }
+    html, body {
+      width: 3.5in; height: 2in; margin: 0; padding: 0;
+      overflow: hidden; min-height: 0; display: block; background: #fff;
+    }
+    #stars, nav, .eyebrow, .card-actions, .hint, footer { display: none !important; }
+    main {
+      display: block !important; padding: 0 !important; margin: 0 !important; min-height: 0 !important;
+    }
+    #printable-card {
+      margin: 0 !important; box-shadow: none !important; border: none !important;
+      width: 3.5in !important; height: 2in !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
   }
 </style>
 </head>
@@ -185,7 +192,7 @@ $roleTitle = $person && $person['roles'] ? implode(' · ', array_map('trim', exp
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wade@mythosevents.com">wade@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script>

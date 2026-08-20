@@ -254,7 +254,7 @@ mysqli_close($conn);
     <div class="error-icon">⚠️</div>
     <h1>Invalid Link</h1>
     <div class="error-card">
-      <p>This confirmation link doesn't look right. Please check your email and try clicking the link again, or <a href="mailto:wade@mythosevents.com" style="color:var(--purple-lt)">contact us</a> for help.</p>
+      <p>This confirmation link doesn't look right. Please check your email and try clicking the link again, or <a href="mailto:wadehawkins@mythosevents.com" style="color:var(--purple-lt)">contact us</a> for help.</p>
     </div>
     <a href="/join/" class="btn-primary">Start Over</a>
   </div>
@@ -413,7 +413,7 @@ mysqli_close($conn);
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wade@mythosevents.com">wade@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAv7ZlQy5ZaooKBRw64ZsbQN6W6rgoshPo&libraries=places"></script>

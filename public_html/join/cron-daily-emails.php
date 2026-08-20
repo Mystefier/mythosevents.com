@@ -40,7 +40,7 @@ foreach ($subscribers as $sub) {
     $subject = "Want to Do More Than Just Watch?";
     $body = "
 <html>
-<head><meta charset='UTF-8'></head>
+<head><meta charset='UTF-8'><meta name='color-scheme' content='light only'><meta name='supported-color-schemes' content='light only'></head>
 <body style='margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;'>
 <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#0D0B1A;padding:40px 20px;'>
 <tr><td align='center'>
@@ -68,7 +68,7 @@ foreach ($subscribers as $sub) {
 </body>
 </html>";
 
-    $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Events@Mythos.com\r\n";
+    $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: wadehawkins@mythosevents.com\r\n";
     if (mail($sub['email'], $subject, $body, $headers)) {
         $markStmt = mysqli_prepare($conn, "UPDATE people SET subscriber_invite_sent_at = NOW() WHERE id = ?");
         mysqli_stmt_bind_param($markStmt, "i", $sub['id']);
@@ -102,7 +102,7 @@ foreach ($venueFolks as $person) {
     $subject = "Add Your Venue to Mythos Events";
     $body = "
 <html>
-<head><meta charset='UTF-8'></head>
+<head><meta charset='UTF-8'><meta name='color-scheme' content='light only'><meta name='supported-color-schemes' content='light only'></head>
 <body style='margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;'>
 <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#0D0B1A;padding:40px 20px;'>
 <tr><td align='center'>
@@ -123,7 +123,7 @@ foreach ($venueFolks as $person) {
 </body>
 </html>";
 
-    $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Events@Mythos.com\r\n";
+    $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: wadehawkins@mythosevents.com\r\n";
     if (mail($person['email'], $subject, $body, $headers)) {
         $markStmt = mysqli_prepare($conn, "UPDATE people SET venue_reminder_sent_at = NOW() WHERE id = ?");
         mysqli_stmt_bind_param($markStmt, "i", $person['id']);

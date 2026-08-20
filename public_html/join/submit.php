@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $messageBody = '
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
 <title>Welcome to Mythos Events</title></head>
 <body style="margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0D0B1A;padding:40px 20px;">
@@ -174,7 +174,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <tr>
           <td align="center" style="padding:32px 0 0;">
             <p style="margin:0 0 8px;font-size:12px;color:rgba(196,168,232,0.4);letter-spacing:2px;text-transform:uppercase;">Mythos Events &nbsp;·&nbsp; Glendale, Arizona</p>
-            <p style="margin:0;font-size:12px;color:rgba(196,168,232,0.3);">Problems? Email <a href="mailto:wade@mythosevents.com" style="color:rgba(196,168,232,0.5);">wade@mythosevents.com</a></p>
+            <p style="margin:0;font-size:12px;color:rgba(196,168,232,0.3);">Problems? Email <a href="mailto:wadehawkins@mythosevents.com" style="color:rgba(196,168,232,0.5);">wadehawkins@mythosevents.com</a></p>
           </td>
         </tr>
 
@@ -186,7 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $headers = "MIME-Version: 1.0" . "\r\n";
             $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-            $headers .= "From: Events@Mythos.com" . "\r\n"; // Replace with your email address
+            $headers .= "From: wadehawkins@mythosevents.com" . "\r\n"; // Replace with your email address
 
             mail($email, $subject, $messageBody, $headers);
 

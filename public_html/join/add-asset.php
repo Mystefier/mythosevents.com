@@ -27,6 +27,8 @@ $assetTypes = [
     'Other' => '✨',
 ];
 
+$presetType = isset($_GET['type']) && isset($assetTypes[$_GET['type']]) ? $_GET['type'] : null;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $type = isset($_POST["type"]) && isset($assetTypes[$_POST["type"]]) ? $_POST["type"] : null;
     $name = isset($_POST["name"]) ? trim($_POST["name"]) : '';
@@ -180,7 +182,7 @@ mysqli_close($conn);
 <main>
   <div class="page-header">
     <div class="eyebrow">Your Profile</div>
-    <h1>Add an Asset</h1>
+    <h1><?php echo $presetType ? 'Add Your ' . htmlspecialchars($presetType) : 'Add an Asset'; ?></h1>
   </div>
 
   <div class="form-card">
@@ -197,15 +199,21 @@ mysqli_close($conn);
       <form action="add-asset.php" method="post" onsubmit="return validateAssetForm()">
 
         <div class="form-section">
-          <div class="section-label">What Kind of Asset?</div>
-          <div class="type-grid">
-            <?php foreach ($assetTypes as $t => $icon): ?>
-              <label class="type-item">
-                <input type="radio" name="type" value="<?php echo htmlspecialchars($t); ?>" required>
-                <span><?php echo $icon; ?> <?php echo htmlspecialchars($t); ?></span>
-              </label>
-            <?php endforeach; ?>
-          </div>
+          <?php if ($presetType): ?>
+            <div class="section-label">Adding a <?php echo htmlspecialchars($presetType); ?></div>
+            <input type="hidden" name="type" value="<?php echo htmlspecialchars($presetType); ?>">
+            <p style="font-size:13px;color:var(--muted);">Not what you meant? <a href="add-asset.php" style="color:var(--purple-lt);">Choose a different asset type</a>.</p>
+          <?php else: ?>
+            <div class="section-label">What Kind of Asset?</div>
+            <div class="type-grid">
+              <?php foreach ($assetTypes as $t => $icon): ?>
+                <label class="type-item">
+                  <input type="radio" name="type" value="<?php echo htmlspecialchars($t); ?>" required>
+                  <span><?php echo $icon; ?> <?php echo htmlspecialchars($t); ?></span>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
         </div>
 
         <div class="form-section">
@@ -219,7 +227,7 @@ mysqli_close($conn);
             <textarea id="description" name="description" placeholder="Any details worth knowing about it"></textarea>
           </div>
 
-          <div id="venueFields">
+          <div id="venueFields" <?php echo $presetType === 'Venue' ? 'style="display:block;"' : ''; ?>>
             <div class="field">
               <label for="venueAddress">Venue Address</label>
               <input type="text" id="venueAddress" name="venueAddress" placeholder="Street, City, State">
@@ -252,7 +260,7 @@ mysqli_close($conn);
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wade@mythosevents.com">wade@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAv7ZlQy5ZaooKBRw64ZsbQN6W6rgoshPo&libraries=places"></script>
@@ -301,7 +309,7 @@ mysqli_close($conn);
   });
 
   function validateAssetForm() {
-    const selectedType = document.querySelector('input[name="type"]:checked');
+    const selectedType = document.querySelector('input[name="type"]:checked, input[type="hidden"][name="type"]');
     if (selectedType && selectedType.value === 'Venue') {
       if (!document.getElementById('venueLatitude').value) {
         alert('Please enter and confirm a venue address.');

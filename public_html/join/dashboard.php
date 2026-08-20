@@ -173,7 +173,7 @@ $needsVenueNudge = $hasVenueRole && !$hasVenueAsset;
     <h2>Tell Us About Your Venue</h2>
     <p>You mentioned you manage or own a venue — add its details now (address, capacity) so we can match it with the right talent and events. Takes about a minute.</p>
     <div style="text-align:center;margin-top:16px;">
-      <a href="add-asset.php" class="btn btn-primary" style="display:inline-block;">Add Your Venue</a>
+      <a href="add-asset.php?type=Venue" class="btn btn-primary" style="display:inline-block;">Add Your Venue</a>
     </div>
   </div>
   <?php endif; ?>
@@ -245,7 +245,7 @@ $needsVenueNudge = $hasVenueRole && !$hasVenueAsset;
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wade@mythosevents.com">wade@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script>

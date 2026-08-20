@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $subject = "Thanks for Your Interest — Mythos Events";
             $bodyMsg = "
 <html>
-<head><meta charset='UTF-8'></head>
+<head><meta charset='UTF-8'><meta name='color-scheme' content='light only'><meta name='supported-color-schemes' content='light only'></head>
 <body style='margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;'>
 <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#0D0B1A;padding:40px 20px;'>
 <tr><td align='center'>
@@ -36,23 +36,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <tr><td>
 <h1 style='margin:0 0 16px;font-family:Georgia,serif;font-size:26px;color:#FFFFFF;'>Thanks, " . htmlspecialchars($firstName ?: 'there') . "!</h1>
 <p style='margin:0 0 16px;font-size:15px;color:#C4A8E8;line-height:1.7;'>We received your interest in bringing Mythos Events to <strong>" . htmlspecialchars($businessName) . "</strong>. Our team will review your info and reach out soon to talk through what a partnership could look like.</p>
-<p style='margin:0;font-size:15px;color:#C4A8E8;line-height:1.7;'>Questions in the meantime? Just reply to this email or reach us at <a href='mailto:wade@mythosevents.com' style='color:#9B6FD0;'>wade@mythosevents.com</a>.</p>
+<p style='margin:0;font-size:15px;color:#C4A8E8;line-height:1.7;'>Questions in the meantime? Just reply to this email or reach us at <a href='mailto:wadehawkins@mythosevents.com' style='color:#9B6FD0;'>wadehawkins@mythosevents.com</a>.</p>
 </td></tr>
 </table>
 </td></tr>
 </table>
 </body>
 </html>";
-            $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Events@Mythos.com\r\n";
+            $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: wadehawkins@mythosevents.com\r\n";
             mail($email, $subject, $bodyMsg, $headers);
 
             // Notify the team of a new venue lead
             $teamSubject = "New Venue Lead: " . $businessName;
             $teamBody = "New venue inquiry submitted:\n\nBusiness: $businessName\nContact: $firstName $lastName\nEmail: $email\nPhone: $phoneNumber\nWebsite: $website\nMessage: $message";
-            mail("wade@mythosevents.com", $teamSubject, $teamBody);
+            mail("wadehawkins@mythosevents.com", $teamSubject, $teamBody);
         } else {
             $statusType = 'error';
-            $status = "Something went wrong submitting your info. Please try again, or email us directly at wade@mythosevents.com.";
+            $status = "Something went wrong submitting your info. Please try again, or email us directly at wadehawkins@mythosevents.com.";
         }
     } else {
         $statusType = 'error';
@@ -327,7 +327,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wade@mythosevents.com">wade@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script>

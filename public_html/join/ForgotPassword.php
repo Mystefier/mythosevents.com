@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $message = '
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
 <title>Reset Your Password — Mythos Events</title></head>
 <body style="margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0D0B1A;padding:40px 20px;">
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <td align="center" style="padding:32px 0 0;">
             <p style="margin:0 0 8px;font-size:12px;color:rgba(196,168,232,0.4);letter-spacing:2px;text-transform:uppercase;">Mythos Events &nbsp;·&nbsp; Glendale, Arizona</p>
             <p style="margin:0;font-size:12px;color:rgba(196,168,232,0.3);">If you didn\'t request this, you can safely ignore this email — your password will stay the same.</p>
-            <p style="margin:8px 0 0;font-size:12px;color:rgba(196,168,232,0.3);">Problems? Email <a href="mailto:wade@mythosevents.com" style="color:rgba(196,168,232,0.5);">wade@mythosevents.com</a></p>
+            <p style="margin:8px 0 0;font-size:12px;color:rgba(196,168,232,0.3);">Problems? Email <a href="mailto:wadehawkins@mythosevents.com" style="color:rgba(196,168,232,0.5);">wadehawkins@mythosevents.com</a></p>
           </td>
         </tr>
       </table>
@@ -95,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 </html>';
 
-            $headers  = "From: no-reply@mythosevents.com\r\n";
+            $headers  = "From: wadehawkins@mythosevents.com\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
             if (mail($email, $subject, $message, $headers)) {
@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $status = "We've sent a password reset link to <strong>" . htmlspecialchars($email) . "</strong>. Check your inbox — the link expires in 1 hour.";
             } else {
                 $statusType = 'error';
-                $status = "Something went wrong sending the reset email. Please try again, or email <a href='mailto:wade@mythosevents.com' style='color:var(--purple-lt)'>wade@mythosevents.com</a> directly.";
+                $status = "Something went wrong sending the reset email. Please try again, or email <a href='mailto:wadehawkins@mythosevents.com' style='color:var(--purple-lt)'>wadehawkins@mythosevents.com</a> directly.";
             }
         } else {
             $statusType = 'warning';
@@ -240,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wade@mythosevents.com">wade@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script>

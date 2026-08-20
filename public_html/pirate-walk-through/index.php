@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $safeInterest = htmlspecialchars($roleText);
             $bodyMsg = "
 <html>
-<head><meta charset='UTF-8'></head>
+<head><meta charset='UTF-8'><meta name='color-scheme' content='light only'><meta name='supported-color-schemes' content='light only'></head>
 <body style='margin:0;padding:0;background-color:#0D0B1A;font-family:Arial,sans-serif;'>
 <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#0D0B1A;padding:40px 20px;'>
 <tr><td align='center'>
@@ -69,22 +69,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <h1 style='margin:0 0 16px;font-family:Georgia,serif;font-size:26px;color:#FFFFFF;'>Ahoy, $safeFirstName!</h1>
 <p style='margin:0 0 16px;font-size:15px;color:#C4A8E8;line-height:1.7;'>You're signed up to help with the <strong>Pirate Walk Through</strong> at Horizons Community Church's Trunk or Treat on <strong>Saturday, October 31st at 6:00 PM</strong>.</p>
 <p style='margin:0 0 16px;font-size:15px;color:#C4A8E8;line-height:1.7;'>You signed up for: $safeInterest</p>
-<p style='margin:0;font-size:15px;color:#C4A8E8;line-height:1.7;'>We'll follow up with more details as the date gets closer. Questions in the meantime? Reply to this email or reach us at <a href='mailto:wade@mythosevents.com' style='color:#9B6FD0;'>wade@mythosevents.com</a>.</p>
+<p style='margin:0;font-size:15px;color:#C4A8E8;line-height:1.7;'>We'll follow up with more details as the date gets closer. Questions in the meantime? Reply to this email or reach us at <a href='mailto:wadehawkins@mythosevents.com' style='color:#9B6FD0;'>wadehawkins@mythosevents.com</a>.</p>
 </td></tr>
 </table>
 </td></tr>
 </table>
 </body>
 </html>";
-            $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Events@Mythos.com\r\n";
+            $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: wadehawkins@mythosevents.com\r\n";
             mail($email, $subject, $bodyMsg, $headers);
 
             $teamSubject = "Pirate Walk Through signup: " . $firstName . " " . $lastName;
             $teamBody = "Name: $firstName $lastName\nEmail: $email\nPhone: $phoneNumber\nInterest: $roleText\nAvailability/notes: $availability";
-            mail("wade@mythosevents.com", $teamSubject, $teamBody);
+            mail("wadehawkins@mythosevents.com", $teamSubject, $teamBody);
         } else {
             $statusType = 'error';
-            $status = "Something went wrong. Please try again, or email wade@mythosevents.com directly.";
+            $status = "Something went wrong. Please try again, or email wadehawkins@mythosevents.com directly.";
         }
     } else {
         $statusType = 'error';
@@ -378,7 +378,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wade@mythosevents.com">wade@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script>
