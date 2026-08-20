@@ -50,10 +50,10 @@ foreach ($subscribers as $sub) {
 <p style='margin:0 0 20px;font-size:15px;color:#C4A8E8;line-height:1.7;'>You've been getting our updates for about a week now — thanks for sticking around. We wanted to ask: is there more you'd want to do with Mythos Events than just watch from the sidelines?</p>
 <p style='margin:0 0 16px;font-size:15px;color:#C4A8E8;line-height:1.7;'>If you have a performance, an art piece, a business that could use vendor space, a venue, or anything else you'd want to bring to an event, we'd love to have you on the team:</p>
 <ul style='margin:0 0 24px;padding-left:20px;font-size:14px;color:#C4A8E8;line-height:1.9;'>
-<li>Perform, or share your art</li>
-<li>Set up a vendor booth</li>
-<li>Bring your venue into the network</li>
-<li>Help organize or spread the word as an affiliate</li>
+<li style='color:#C4A8E8;'>Perform, or share your art</li>
+<li style='color:#C4A8E8;'>Set up a vendor booth</li>
+<li style='color:#C4A8E8;'>Bring your venue into the network</li>
+<li style='color:#C4A8E8;'>Help organize or spread the word as an affiliate</li>
 </ul>
 <table cellpadding='0' cellspacing='0' style='margin:0 auto;'>
 <tr><td align='center' style='background-color:#6B3FA0;border-radius:8px;'>
