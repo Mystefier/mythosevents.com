@@ -66,21 +66,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if the email is valid
     if ($email) {
-        // Insert data into the "people" table
-        $insertSql = "INSERT INTO people (email, first, last, phone, roles, description, website, recruiter, dob, password, salt, message, service_area_address, service_area_latitude, service_area_longitude, service_area_radius_miles, involvement_type)
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conn, $insertSql);
-        mysqli_stmt_bind_param(
-            $stmt,
-            "sssssssssssssddis",
-            $email, $firstName, $lastName, $phoneNumber, $roles, $description, $website, $recruiter,
-            $dob, $hashedPassword, $salt, $message, $serviceAreaAddress,
-            $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType
-        );
+        // Check for an existing passwordless row (e.g. a subscriber-only stub) —
+        // upgrade it in place instead of creating a duplicate row for the same email
+        $checkStmt = mysqli_prepare($conn, "SELECT id, password FROM people WHERE email = ?");
+        mysqli_stmt_bind_param($checkStmt, "s", $email);
+        mysqli_stmt_execute($checkStmt);
+        $existingResult = mysqli_stmt_get_result($checkStmt);
+        $existingRow = mysqli_fetch_assoc($existingResult);
+        mysqli_stmt_close($checkStmt);
+
+        if ($existingRow && empty($existingRow['password'])) {
+            $recentlyAddedId = intval($existingRow['id']);
+            $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, roles = ?, description = ?, website = ?, recruiter = ?, dob = ?, password = ?, salt = ?, message = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ? WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $updateSql);
+            mysqli_stmt_bind_param(
+                $stmt,
+                "ssssssssssssddisi",
+                $firstName, $lastName, $phoneNumber, $roles, $description, $website, $recruiter,
+                $dob, $hashedPassword, $salt, $message, $serviceAreaAddress,
+                $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType, $recentlyAddedId
+            );
+        } else {
+            // Insert data into the "people" table
+            $insertSql = "INSERT INTO people (email, first, last, phone, roles, description, website, recruiter, dob, password, salt, message, service_area_address, service_area_latitude, service_area_longitude, service_area_radius_miles, involvement_type)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = mysqli_prepare($conn, $insertSql);
+            mysqli_stmt_bind_param(
+                $stmt,
+                "sssssssssssssddis",
+                $email, $firstName, $lastName, $phoneNumber, $roles, $description, $website, $recruiter,
+                $dob, $hashedPassword, $salt, $message, $serviceAreaAddress,
+                $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType
+            );
+        }
 
         if (mysqli_stmt_execute($stmt)) {
-            // Retrieve the ID of the recently added record
-            $recentlyAddedId = mysqli_insert_id($conn);
+            // Retrieve the ID of the record (existing id if upgraded, new id if inserted)
+            if (!isset($recentlyAddedId)) {
+                $recentlyAddedId = mysqli_insert_id($conn);
+            }
             mysqli_stmt_close($stmt);
 
             // Create the link with the ID variable

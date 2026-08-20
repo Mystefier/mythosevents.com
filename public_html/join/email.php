@@ -13,10 +13,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $checkSql = "SELECT * FROM people WHERE email = '$email'";
-        $result = mysqli_query($conn, $checkSql);
+        $checkStmt = mysqli_prepare($conn, "SELECT password FROM people WHERE email = ?");
+        mysqli_stmt_bind_param($checkStmt, "s", $email);
+        mysqli_stmt_execute($checkStmt);
+        $result = mysqli_stmt_get_result($checkStmt);
+        $existing = mysqli_fetch_assoc($result);
+        mysqli_stmt_close($checkStmt);
 
-        if (mysqli_num_rows($result) > 0) {
+        // Someone already fully registered (has a password) needs to log in instead.
+        // A passwordless row (e.g. subscriber-only) is still free to complete a full
+        // application — same email, no dead end.
+        if ($existing && !empty($existing['password'])) {
             $statusType = 'warning';
             $status = "The email <strong>$email</strong> is already in our system. Please use a different address or log in below.";
         } else {
