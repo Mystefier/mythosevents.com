@@ -23,12 +23,29 @@ if (!$result || mysqli_num_rows($result) === 0) {
 
 $person = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
+
+$assetStmt = mysqli_prepare($conn, "SELECT id, type, name FROM assets WHERE owner_person_id = ? ORDER BY created_at DESC");
+mysqli_stmt_bind_param($assetStmt, "i", $personId);
+mysqli_stmt_execute($assetStmt);
+$assetResult = mysqli_stmt_get_result($assetStmt);
+$assets = [];
+while ($row = mysqli_fetch_assoc($assetResult)) {
+    $assets[] = $row;
+}
+mysqli_stmt_close($assetStmt);
 mysqli_close($conn);
 
 $referralLink = "https://mythosevents.com/?id=" . $person['id'];
 $cardLink = "https://mythosevents.com/card/?id=" . $person['id'];
 $rolesList = $person['roles'] ? array_map('trim', explode(',', $person['roles'])) : [];
 $isWelcome = isset($_GET['welcome']) && $_GET['welcome'] == '1';
+
+$hasVenueRole = in_array('Venue Manager/Owner', $rolesList);
+$hasVenueAsset = false;
+foreach ($assets as $a) {
+    if ($a['type'] === 'Venue') { $hasVenueAsset = true; break; }
+}
+$needsVenueNudge = $hasVenueRole && !$hasVenueAsset;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -150,6 +167,17 @@ $isWelcome = isset($_GET['welcome']) && $_GET['welcome'] == '1';
     <h1><?php echo htmlspecialchars($person['first']); ?>'s Dashboard</h1>
   </div>
 
+  <?php if ($needsVenueNudge): ?>
+  <div class="welcome-card">
+    <div class="status-icon">🏛️</div>
+    <h2>Tell Us About Your Venue</h2>
+    <p>You mentioned you manage or own a venue — add its details now (address, capacity) so we can match it with the right talent and events. Takes about a minute.</p>
+    <div style="text-align:center;margin-top:16px;">
+      <a href="add-asset.php" class="btn btn-primary" style="display:inline-block;">Add Your Venue</a>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <?php if ($isWelcome): ?>
   <div class="welcome-card">
     <div class="status-icon">✦</div>
@@ -179,6 +207,23 @@ $isWelcome = isset($_GET['welcome']) && $_GET['welcome'] == '1';
 
     <div class="btn-row" style="margin-top: 24px;">
       <a href="edit-profile.php" class="btn btn-primary">Edit My Info</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Your Assets</h2>
+    <?php if ($assets): ?>
+      <?php foreach ($assets as $asset): ?>
+        <div class="info-row">
+          <span class="info-label"><?php echo htmlspecialchars($asset['name']); ?></span>
+          <span class="info-value"><span class="role-tag"><?php echo htmlspecialchars($asset['type']); ?></span></span>
+        </div>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p style="font-size: 13px; color: var(--muted);">You haven't added any assets yet — venues, equipment, shows, and more can all live here.</p>
+    <?php endif; ?>
+    <div class="btn-row" style="margin-top: 24px;">
+      <a href="add-asset.php" class="btn btn-primary">Add Asset</a>
     </div>
   </div>
 
