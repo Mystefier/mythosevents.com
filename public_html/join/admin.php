@@ -149,6 +149,25 @@ mysqli_close($conn);
   }
   .muted-cell { color: var(--muted); font-size: 12px; }
   .empty-note { color: var(--muted); font-size: 13px; padding: 20px; text-align: center; }
+
+  .reference-card {
+    background: var(--card); border: 1px solid var(--purple-dim); border-radius: 10px;
+    padding: 28px 32px; max-width: 760px;
+  }
+  .reference-card h3 {
+    font-family: 'Cinzel', serif; font-size: 15px; color: var(--white); margin: 20px 0 8px;
+  }
+  .reference-card h3:first-child { margin-top: 0; }
+  .reference-card p { font-size: 13.5px; color: var(--lilac); line-height: 1.7; margin-bottom: 10px; }
+  .reference-card .note {
+    font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--purple-dim);
+    padding-top: 14px; margin-top: 18px;
+  }
+  .reference-card code {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--purple-dim);
+    border-radius: 4px; padding: 1px 6px; font-size: 12px; color: var(--gold);
+    font-family: 'SF Mono', Consolas, monospace;
+  }
 </style>
 </head>
 <body>
@@ -257,6 +276,32 @@ mysqli_close($conn);
       <?php else: ?>
         <div class="empty-note">No assets yet.</div>
       <?php endif; ?>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">How the Affiliate System Works</div>
+    </div>
+    <div class="reference-card">
+      <p>Every person who joins Mythos Events — in any role — automatically gets their own permanent referral link. Anyone who signs up through that link is credited to them, forever, even if the person above them later leaves.</p>
+
+      <h3>1. Everyone gets a link automatically</h3>
+      <p>The moment someone finishes signing up, their account's own ID becomes their referral link: <code>mythosevents.com/?id=&lt;their ID&gt;</code>. No separate "become an affiliate" step — it's built into every account. Someone can be a Performer <em>and</em> an active affiliate at the same time.</p>
+
+      <h3>2. The link travels with them</h3>
+      <p>Share the link on social media, hand out the digital business card, or just tell a friend — the moment someone lands on the site with <code>?id=X</code> in the URL, that ID is captured and carried through automatically as they click around the site, and remembered for the rest of that browser session.</p>
+
+      <h3>3. Credit is assigned at signup</h3>
+      <p>When someone completes the join form, whichever ID brought them there gets stored as their <code>recruiter</code> — permanent, and doesn't change later.</p>
+
+      <h3>4. Credit survives even if the recruiter leaves</h3>
+      <p>If someone deletes their account, everyone <em>they</em> recruited doesn't lose their place in the chain — they're automatically reassigned to that person's own recruiter, so credit passes one level up instead of disappearing.</p>
+
+      <h3>5. What an affiliate sees today</h3>
+      <p>Their dashboard shows their referral link plus a printable/PDF digital business card with a QR code pointing to it.</p>
+
+      <div class="note">Not built yet: the <code>recruiter</code> field currently tracks, but doesn't pay out — there's no reward or commission system wired up yet. Everything above is live; the reward layer is the next piece when ready.</div>
     </div>
   </div>
 </main>
