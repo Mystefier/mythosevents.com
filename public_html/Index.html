@@ -100,6 +100,12 @@
     color: var(--muted) !important; text-decoration: none;
   }
   .nav-hover-panel .hover-link:hover { color: var(--white) !important; }
+  .hover-menu-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 8px; border-radius: 6px; font-size: 13px;
+    color: var(--lilac) !important; text-decoration: none; transition: background 0.15s, color 0.15s;
+  }
+  .hover-menu-link:hover { background: rgba(107,63,160,0.15); color: var(--white) !important; }
 
   /* ── HERO ── */
   .hero {
@@ -380,6 +386,16 @@
   <div class="nav-links">
     <a href="/about/">About</a>
     <a href="#events">Events</a>
+    <div class="nav-hover">
+      <a href="#">I Have...</a>
+      <div class="nav-hover-panel">
+        <div class="nav-hover-panel-inner" style="padding: 10px; width: 220px;">
+          <a href="/performers/" class="hover-menu-link">🎭 Talent to Offer</a>
+          <a href="/venues/" class="hover-menu-link">🏛️ A Venue</a>
+          <a href="/affiliates/" class="hover-menu-link">🎟️ A Network to Share</a>
+        </div>
+      </div>
+    </div>
     <div class="nav-hover">
       <a href="/subscribe/">Subscribe</a>
       <div class="nav-hover-panel">

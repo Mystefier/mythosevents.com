@@ -13,14 +13,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phoneNumber = isset($_POST["phoneNumber"]) ? mysqli_real_escape_string($conn, $_POST["phoneNumber"]) : '';
     $website = isset($_POST["website"]) ? mysqli_real_escape_string($conn, $_POST["website"]) : '';
     $message = isset($_POST["message"]) ? mysqli_real_escape_string($conn, $_POST["message"]) : '';
+    $recruiter = isset($_POST["recruiter"]) && ctype_digit($_POST["recruiter"]) ? intval($_POST["recruiter"]) : 0;
 
     $email = filter_var($email, FILTER_VALIDATE_EMAIL);
 
     if ($email && $businessName) {
-        $insertSql = "INSERT INTO people (email, first, last, phone, business_name, website, message, roles, involvement_type)
-                      VALUES ('$email', '$firstName', '$lastName', '$phoneNumber', '$businessName', '$website', '$message', 'Venue', 'Venue')";
+        $insertStmt = mysqli_prepare($conn, "INSERT INTO people (email, first, last, phone, business_name, website, message, roles, involvement_type, recruiter)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, 'Venue', 'Venue', ?)");
+        mysqli_stmt_bind_param($insertStmt, "sssssssi", $email, $firstName, $lastName, $phoneNumber, $businessName, $website, $message, $recruiter);
 
-        if (mysqli_query($conn, $insertSql)) {
+        if (mysqli_stmt_execute($insertStmt)) {
+            mysqli_stmt_close($insertStmt);
             $statusType = 'success';
             $status = "Thanks for reaching out! We've received your info for <strong>" . htmlspecialchars($businessName) . "</strong> and will be in touch soon to talk about bringing Mythos Events to your venue.";
 
@@ -51,6 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $teamBody = "New venue inquiry submitted:\n\nBusiness: $businessName\nContact: $firstName $lastName\nEmail: $email\nPhone: $phoneNumber\nWebsite: $website\nMessage: $message";
             mail("wadehawkins@mythosevents.com", $teamSubject, $teamBody);
         } else {
+            mysqli_stmt_close($insertStmt);
             $statusType = 'error';
             $status = "Something went wrong submitting your info. Please try again, or email us directly at wadehawkins@mythosevents.com.";
         }
@@ -316,6 +320,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <label for="message">Tell Us About Your Venue <span class="label-optional">optional</span></label>
               <textarea id="message" name="message" placeholder="What kind of venue is it? What's your typical crowd like? What are you hoping to bring in?"></textarea>
             </div>
+            <input type="hidden" id="recruiterInput" name="recruiter" value="">
             <button type="submit" class="submit-btn">Send Inquiry ✦</button>
           </form>
         </div>
@@ -339,6 +344,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s`;
     container.appendChild(s);
   }
+
+  // Affiliate/referral tracking — carry ?id= into the recruiter field
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    let affId = params.get('id');
+    if (affId && /^\d+$/.test(affId)) {
+      sessionStorage.setItem('mythos_ref_id', affId);
+    } else {
+      affId = sessionStorage.getItem('mythos_ref_id');
+    }
+    if (affId && /^\d+$/.test(affId)) {
+      const input = document.getElementById('recruiterInput');
+      if (input) input.value = affId;
+    }
+  })();
 </script>
 </body>
 </html>

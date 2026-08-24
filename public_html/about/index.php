@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About Mythos Events</title>
-<meta name="description" content="How Mythos Events brings talent, venues, organizers, and audiences together to create festivals built on real exchange, not spectacle.">
+<meta name="description" content="Mythos Events brings performers, venues, artists, and promoters together with people looking for a good time.">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -70,6 +70,12 @@
   .nav-hover-panel button:hover { background: var(--purple-lt); }
   .nav-hover-panel .hover-link { display: block; text-align: center; margin-top: 10px; font-size: 11px; color: var(--muted) !important; text-decoration: none; }
   .nav-hover-panel .hover-link:hover { color: var(--white) !important; }
+  .hover-menu-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 8px; border-radius: 6px; font-size: 13px;
+    color: var(--lilac) !important; text-decoration: none; transition: background 0.15s, color 0.15s;
+  }
+  .hover-menu-link:hover { background: rgba(107,63,160,0.15); color: var(--white) !important; }
 
   main { flex: 1; position: relative; z-index: 1; }
   section { padding: 80px 0; border-top: 1px solid var(--purple-dim); }
@@ -136,6 +142,16 @@
     <a href="/">Home</a>
     <a href="/#events">Events</a>
     <div class="nav-hover">
+      <a href="#">I Have...</a>
+      <div class="nav-hover-panel">
+        <div class="nav-hover-panel-inner" style="padding: 10px; width: 220px;">
+          <a href="/performers/" class="hover-menu-link">🎭 Talent to Offer</a>
+          <a href="/venues/" class="hover-menu-link">🏛️ A Venue</a>
+          <a href="/affiliates/" class="hover-menu-link">🎟️ A Network to Share</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-hover">
       <a href="/subscribe/">Subscribe</a>
       <div class="nav-hover-panel">
         <div class="nav-hover-panel-inner">
@@ -169,8 +185,11 @@
   <section>
     <div class="wrap">
       <div class="eyebrow">About Mythos Events</div>
-      <h1>Where Creators Meet Their Audience</h1>
-      <p class="hero-sub">Mythos Events builds fantasy festivals where the artist is at the table, the performer steps offstage to talk, and the game designer explains the rules they wrote. No glass case. Just people, stories, and wonder.</p>
+      <h1>Performers. Venues. Artists. Promoters.</h1>
+      <p class="hero-sub">We bring them all together — and match them with people looking for a good time. If you've got something to offer, we'll help you find who needs it.</p>
+      <div class="hero-cta" style="text-align:center;margin-top:32px;">
+        <a href="/join/" class="btn-primary">Get Involved ✦</a>
+      </div>
     </div>
   </section>
 
@@ -251,6 +270,22 @@
     s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s`;
     container.appendChild(s);
   }
+
+  // Affiliate/referral tracking — carry ?id= through to the join form
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    let affId = params.get('id');
+    if (affId && /^\d+$/.test(affId)) {
+      sessionStorage.setItem('mythos_ref_id', affId);
+    } else {
+      affId = sessionStorage.getItem('mythos_ref_id');
+    }
+    if (affId && /^\d+$/.test(affId)) {
+      document.querySelectorAll('a[href="/join/"]').forEach(a => {
+        a.href = '/join/?id=' + encodeURIComponent(affId);
+      });
+    }
+  })();
 </script>
 </body>
 </html>

@@ -48,9 +48,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $longitude = isset($_POST["venueLongitude"]) && $_POST["venueLongitude"] !== '' ? floatval($_POST["venueLongitude"]) : null;
                 $capacity = isset($_POST["venueCapacity"]) && $_POST["venueCapacity"] !== '' ? intval($_POST["venueCapacity"]) : null;
                 $indoorOutdoor = isset($_POST["venueIndoorOutdoor"]) ? $_POST["venueIndoorOutdoor"] : '';
+                $venueType = isset($_POST["venueType"]) ? $_POST["venueType"] : '';
+                $hasStage = isset($_POST["venueHasStage"]) ? 1 : 0;
+                $parkingAvailable = isset($_POST["venueParking"]) ? 1 : 0;
+                $typicalHours = isset($_POST["venueTypicalHours"]) ? trim($_POST["venueTypicalHours"]) : '';
 
-                $venueStmt = mysqli_prepare($conn, "INSERT INTO asset_venues (asset_id, address, latitude, longitude, capacity, indoor_outdoor) VALUES (?, ?, ?, ?, ?, ?)");
-                mysqli_stmt_bind_param($venueStmt, "isddis", $assetId, $address, $latitude, $longitude, $capacity, $indoorOutdoor);
+                $venueStmt = mysqli_prepare($conn, "INSERT INTO asset_venues (asset_id, address, latitude, longitude, capacity, indoor_outdoor, venue_type, has_stage, parking_available, typical_hours) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                mysqli_stmt_bind_param($venueStmt, "isddissiis", $assetId, $address, $latitude, $longitude, $capacity, $indoorOutdoor, $venueType, $hasStage, $parkingAvailable, $typicalHours);
                 mysqli_stmt_execute($venueStmt);
                 mysqli_stmt_close($venueStmt);
             }
@@ -233,6 +237,18 @@ mysqli_close($conn);
               <input type="text" id="venueAddress" name="venueAddress" placeholder="Street, City, State">
               <div id="geocodeStatus" style="font-size:13px;margin-top:8px;min-height:18px;"></div>
             </div>
+            <div class="field">
+              <label for="venueType">Venue Type <span class="label-optional">optional</span></label>
+              <select id="venueType" name="venueType">
+                <option value="">Select...</option>
+                <option value="Bar/Restaurant">Bar / Restaurant</option>
+                <option value="Event Space">Event Space</option>
+                <option value="Community Venue">Community Venue</option>
+                <option value="Outdoor/Park">Outdoor / Park</option>
+                <option value="Retail/Shop">Retail / Shop</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
             <div class="field-row">
               <div class="field">
                 <label for="venueCapacity">Capacity <span class="label-optional">optional</span></label>
@@ -247,6 +263,20 @@ mysqli_close($conn);
                   <option value="Both">Both</option>
                 </select>
               </div>
+            </div>
+            <div class="field">
+              <label for="venueTypicalHours">Typical Days / Hours <span class="label-optional">optional</span></label>
+              <input type="text" id="venueTypicalHours" name="venueTypicalHours" placeholder="e.g. Fri–Sat, 6pm–2am">
+            </div>
+            <div class="field-row">
+              <label class="type-item" style="margin: 0;">
+                <input type="checkbox" id="venueHasStage" name="venueHasStage" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--purple);cursor:pointer;padding:0;margin:0;">
+                <span>Has a stage / performance area</span>
+              </label>
+              <label class="type-item" style="margin: 0;">
+                <input type="checkbox" id="venueParking" name="venueParking" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--purple);cursor:pointer;padding:0;margin:0;">
+                <span>Parking available</span>
+              </label>
             </div>
             <input type="hidden" id="venueLatitude" name="venueLatitude" value="">
             <input type="hidden" id="venueLongitude" name="venueLongitude" value="">
