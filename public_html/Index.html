@@ -70,6 +70,14 @@
   }
   .nav-cta:hover { background: var(--purple-lt) !important; color: var(--white) !important; }
 
+  .nav-toggle {
+    display: none; background: none; border: none; cursor: pointer; padding: 8px; z-index: 101;
+  }
+  .nav-toggle span {
+    display: block; width: 24px; height: 2px; background: var(--white); margin: 5px 0;
+    border-radius: 2px;
+  }
+
   /* ── NAV HOVER FORMS (Log In / Subscribe) ── */
   .nav-hover { position: relative; }
   .nav-hover-panel {
@@ -362,7 +370,18 @@
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     nav { padding: 0 20px; }
-    .nav-links { display: none; }
+    .nav-toggle { display: block; }
+    .nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; align-items: stretch; gap: 0;
+      background: rgba(13,11,26,0.98); border-bottom: 1px solid var(--purple-dim);
+      padding: 8px 20px 20px;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links > a, .nav-links > .nav-hover > a { padding: 14px 4px; display: block; }
+    .nav-links .nav-cta { text-align: center; margin-top: 8px; }
+    .nav-hover-panel { position: static; padding-top: 0; }
+    .nav-hover-panel-inner { width: 100%; box-shadow: none; }
     .about-grid { grid-template-columns: 1fr; gap: 32px; }
     .event-card { grid-template-columns: 1fr; }
     .event-card.reverse { direction: ltr; }
@@ -383,7 +402,10 @@
 <!-- NAV -->
 <nav id="nav">
   <a href="#" class="nav-logo">Mythos<span>✦</span>Events</a>
-  <div class="nav-links">
+  <button type="button" class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
     <a href="/about/">About</a>
     <a href="#events">Events</a>
     <div class="nav-hover">
@@ -673,6 +695,15 @@
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 60);
   });
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinksEl = document.getElementById('navLinks');
+  if (navToggle && navLinksEl) {
+    navToggle.addEventListener('click', () => {
+      navLinksEl.classList.toggle('open');
+    });
+  }
 
   // Affiliate/referral tracking — carry ?id= through to the join form
   (function() {

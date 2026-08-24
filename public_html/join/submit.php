@@ -166,7 +166,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p style="margin:0 0 16px;font-size:16px;color:#C4A8E8;line-height:1.7;">We also made you a digital business card you can print or save as a PDF — handy for sharing your referral link in person:</p>
             <p style="margin:0;font-size:13px;word-break:break-all;">
               <a href="' . $cardLink . '" style="color:#9B6FD0;text-decoration:underline;">' . $cardLink . '</a>
-            </p>
+            </p>' . ($serviceAreaAddress === '' ? '
+
+            <!-- Divider -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;">
+              <tr><td style="border-top:1px solid rgba(107,63,160,0.25);"></td></tr>
+            </table>
+
+            <p style="margin:0 0 16px;font-size:16px;color:#C4A8E8;line-height:1.7;">One more thing — we don\'t have a location on file for you. Adding one helps us actually put you to work: matching you to nearby venues and opportunities, or just knowing how far our reach really goes. Log in and add it on your profile whenever you get a chance:</p>
+            <table cellpadding="0" cellspacing="0" style="margin:0;">
+              <tr><td align="center" style="background-color:#6B3FA0;border-radius:8px;">
+                <a href="https://mythosevents.com/join/login.php" style="display:inline-block;padding:14px 32px;font-family:Georgia,serif;font-size:13px;font-weight:700;letter-spacing:2px;color:#FFFFFF;text-decoration:none;text-transform:uppercase;">Add My Location ✦</a>
+              </td></tr>
+            </table>' : '') . '
 
           </td>
         </tr>

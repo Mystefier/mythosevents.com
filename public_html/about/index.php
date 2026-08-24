@@ -70,6 +70,13 @@
   .nav-hover-panel button:hover { background: var(--purple-lt); }
   .nav-hover-panel .hover-link { display: block; text-align: center; margin-top: 10px; font-size: 11px; color: var(--muted) !important; text-decoration: none; }
   .nav-hover-panel .hover-link:hover { color: var(--white) !important; }
+  .nav-toggle {
+    display: none; background: none; border: none; cursor: pointer; padding: 8px; z-index: 101;
+  }
+  .nav-toggle span {
+    display: block; width: 24px; height: 2px; background: var(--white); margin: 5px 0;
+    border-radius: 2px;
+  }
   .hover-menu-link {
     display: flex; align-items: center; gap: 10px;
     padding: 10px 8px; border-radius: 6px; font-size: 13px;
@@ -125,9 +132,22 @@
   @media (max-width: 800px) {
     .model-grid { grid-template-columns: 1fr 1fr; }
   }
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     nav { padding: 0 20px; }
-    .nav-links { gap: 18px; }
+    .nav-toggle { display: block; }
+    .nav-links {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; align-items: stretch; gap: 0;
+      background: rgba(13,11,26,0.98); border-bottom: 1px solid var(--purple-dim);
+      padding: 8px 20px 20px; z-index: 50;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links > a, .nav-links > .nav-hover > a { padding: 14px 4px; display: block; }
+    .nav-links .nav-cta { text-align: center; margin-top: 8px; }
+    .nav-hover-panel { position: static; padding-top: 0; }
+    .nav-hover-panel-inner { width: 100%; box-shadow: none; }
+  }
+  @media (max-width: 600px) {
     .model-grid { grid-template-columns: 1fr; }
   }
 </style>
@@ -138,7 +158,10 @@
 
 <nav>
   <a href="/" class="nav-logo">Mythos<span>✦</span>Events</a>
-  <div class="nav-links">
+  <button type="button" class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
     <a href="/">Home</a>
     <a href="/#events">Events</a>
     <div class="nav-hover">
@@ -270,6 +293,15 @@
     const sz = Math.random() * 2.5 + 0.4;
     s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s`;
     container.appendChild(s);
+  }
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinksEl = document.getElementById('navLinks');
+  if (navToggle && navLinksEl) {
+    navToggle.addEventListener('click', () => {
+      navLinksEl.classList.toggle('open');
+    });
   }
 
   // Affiliate/referral tracking — carry ?id= through to the join form
