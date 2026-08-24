@@ -23,10 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $website = isset($_POST["website"]) ? $_POST["website"] : '';
     $roles = isset($_POST["roles"]) ? implode(", ", $_POST["roles"]) : '';
 
-    $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? $_POST["serviceAreaAddress"] : '';
-    $serviceAreaLatitude = isset($_POST["serviceAreaLatitude"]) && $_POST["serviceAreaLatitude"] !== '' ? floatval($_POST["serviceAreaLatitude"]) : null;
-    $serviceAreaLongitude = isset($_POST["serviceAreaLongitude"]) && $_POST["serviceAreaLongitude"] !== '' ? floatval($_POST["serviceAreaLongitude"]) : null;
-    $serviceAreaRadius = isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30;
+    // No address means no restriction (worldwide) — don't store a radius with nothing to center it on
+    $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? trim($_POST["serviceAreaAddress"]) : '';
+    $serviceAreaLatitude = ($serviceAreaAddress !== '' && isset($_POST["serviceAreaLatitude"]) && $_POST["serviceAreaLatitude"] !== '') ? floatval($_POST["serviceAreaLatitude"]) : null;
+    $serviceAreaLongitude = ($serviceAreaAddress !== '' && isset($_POST["serviceAreaLongitude"]) && $_POST["serviceAreaLongitude"] !== '') ? floatval($_POST["serviceAreaLongitude"]) : null;
+    $serviceAreaRadius = $serviceAreaAddress !== '' ? (isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30) : null;
 
     // Derive involvement type from roles, same mapping used at signup
     $roleToInvolvementType = [

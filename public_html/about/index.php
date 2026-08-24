@@ -158,6 +158,7 @@
           <form action="/subscribe/" method="post">
             <input type="text" name="firstName" placeholder="First name (optional)">
             <input type="email" name="email" placeholder="Email address" required>
+            <input type="hidden" class="nav-recruiter-input" name="recruiter" value="">
             <button type="submit">Subscribe ✦</button>
           </form>
         </div>
@@ -283,6 +284,9 @@
     if (affId && /^\d+$/.test(affId)) {
       document.querySelectorAll('a[href="/join/"]').forEach(a => {
         a.href = '/join/?id=' + encodeURIComponent(affId);
+      });
+      document.querySelectorAll('.nav-recruiter-input').forEach(input => {
+        input.value = affId;
       });
     }
   })();

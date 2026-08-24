@@ -34,11 +34,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Message field
     $message = isset($_POST["message"]) ? $_POST["message"] : '';
 
-    // Service area fields
-    $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? $_POST["serviceAreaAddress"] : '';
-    $serviceAreaLatitude = isset($_POST["serviceAreaLatitude"]) ? floatval($_POST["serviceAreaLatitude"]) : null;
-    $serviceAreaLongitude = isset($_POST["serviceAreaLongitude"]) ? floatval($_POST["serviceAreaLongitude"]) : null;
-    $serviceAreaRadius = isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30;
+    // Service area fields — no address means no restriction (worldwide),
+    // so we don't invent a radius with nothing to center it on
+    $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? trim($_POST["serviceAreaAddress"]) : '';
+    $serviceAreaLatitude = ($serviceAreaAddress !== '' && isset($_POST["serviceAreaLatitude"]) && $_POST["serviceAreaLatitude"] !== '') ? floatval($_POST["serviceAreaLatitude"]) : null;
+    $serviceAreaLongitude = ($serviceAreaAddress !== '' && isset($_POST["serviceAreaLongitude"]) && $_POST["serviceAreaLongitude"] !== '') ? floatval($_POST["serviceAreaLongitude"]) : null;
+    $serviceAreaRadius = $serviceAreaAddress !== '' ? (isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30) : null;
 
     // Involvement type — derived from the selected roles so we don't ask twice
     $roleToInvolvementType = [

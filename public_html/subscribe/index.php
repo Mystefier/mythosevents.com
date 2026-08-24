@@ -9,28 +9,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $email = isset($_POST["email"]) ? filter_var($_POST["email"], FILTER_SANITIZE_EMAIL) : '';
     $firstName = isset($_POST["firstName"]) ? mysqli_real_escape_string($conn, $_POST["firstName"]) : '';
+    $recruiter = isset($_POST["recruiter"]) && ctype_digit($_POST["recruiter"]) ? intval($_POST["recruiter"]) : 0;
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         // Check if email already exists
-        $checkSql = "SELECT * FROM people WHERE email = '$email'";
-        $result = mysqli_query($conn, $checkSql);
+        $checkStmt = mysqli_prepare($conn, "SELECT id FROM people WHERE email = ?");
+        mysqli_stmt_bind_param($checkStmt, "s", $email);
+        mysqli_stmt_execute($checkStmt);
+        $result = mysqli_stmt_get_result($checkStmt);
+        mysqli_stmt_close($checkStmt);
 
         if (mysqli_num_rows($result) > 0) {
             // Update existing record to add subscriber involvement type
-            $updateSql = "UPDATE people SET involvement_type = 'Subscriber' WHERE email = '$email'";
-            if (mysqli_query($conn, $updateSql)) {
+            // (leave recruiter alone — don't overwrite an existing attribution)
+            $updateStmt = mysqli_prepare($conn, "UPDATE people SET involvement_type = 'Subscriber' WHERE email = ?");
+            mysqli_stmt_bind_param($updateStmt, "s", $email);
+            if (mysqli_stmt_execute($updateStmt)) {
+                mysqli_stmt_close($updateStmt);
                 $statusType = 'success';
                 $status = "You're already in our system! We've marked you as a subscriber.";
             } else {
+                mysqli_stmt_close($updateStmt);
                 $statusType = 'error';
                 $status = "Something went wrong. Please try again.";
             }
         } else {
             // Insert new subscriber
-            $insertSql = "INSERT INTO people (email, first, involvement_type)
-                          VALUES ('$email', '$firstName', 'Subscriber')";
+            $insertStmt = mysqli_prepare($conn, "INSERT INTO people (email, first, involvement_type, recruiter)
+                          VALUES (?, ?, 'Subscriber', ?)");
+            mysqli_stmt_bind_param($insertStmt, "ssi", $email, $firstName, $recruiter);
 
-            if (mysqli_query($conn, $insertSql)) {
+            if (mysqli_stmt_execute($insertStmt)) {
+                mysqli_stmt_close($insertStmt);
                 $statusType = 'success';
                 $status = "Thanks for subscribing! We'll send you updates about upcoming Mythos Events.";
 
@@ -86,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 mail($email, $subject, $message, $headers);
             } else {
+                mysqli_stmt_close($insertStmt);
                 $statusType = 'error';
                 $status = "Something went wrong. Please try again.";
             }
@@ -261,6 +272,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="email" id="email" name="email"
               placeholder="your@email.com" required autofocus>
           </div>
+          <input type="hidden" id="recruiterInput" name="recruiter" value="">
           <button type="submit" class="submit-btn">Subscribe ✦</button>
         </form>
         <p class="form-note">We respect your inbox. Expect updates about upcoming events, opportunities to get involved, and occasional special announcements. Unsubscribe anytime.</p>
@@ -283,6 +295,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*5}s;--delay:${Math.random()*6}s`;
     container.appendChild(s);
   }
+
+  // Affiliate/referral tracking — carry ?id= into the recruiter field
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    let affId = params.get('id');
+    if (affId && /^\d+$/.test(affId)) {
+      sessionStorage.setItem('mythos_ref_id', affId);
+    } else {
+      affId = sessionStorage.getItem('mythos_ref_id');
+    }
+    if (affId && /^\d+$/.test(affId)) {
+      const input = document.getElementById('recruiterInput');
+      if (input) input.value = affId;
+    }
+  })();
 </script>
 </body>
 </html>
