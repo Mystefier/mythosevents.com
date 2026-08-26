@@ -174,6 +174,7 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Operations" <?php echo in_array('Operations', $selectedRoles) ? 'checked' : ''; ?>><span>⚙️ Operations</span></label>
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Venue Manager/Owner" <?php echo in_array('Venue Manager/Owner', $selectedRoles) ? 'checked' : ''; ?>><span>🏛️ Venue Manager/Owner</span></label>
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Other" <?php echo in_array('Other', $selectedRoles) ? 'checked' : ''; ?>><span>✨ Something Else</span></label>
+          <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Sonlight Drama Team" <?php echo in_array('Sonlight Drama Team', $selectedRoles) ? 'checked' : ''; ?>><span>☀️ Sonlight Drama Team</span></label>
         </div>
       </div>
 

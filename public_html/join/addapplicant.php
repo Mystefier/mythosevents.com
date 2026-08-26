@@ -357,6 +357,10 @@ mysqli_close($conn);
             <input type="checkbox" name="roles[]" value="Other">
             <span>✨ Something Else</span>
           </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="roles[]" value="Sonlight Drama Team">
+            <span>☀️ Sonlight Drama Team</span>
+          </label>
         </div>
       </div>
 

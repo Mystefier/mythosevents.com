@@ -52,6 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'Operations' => 'Talent',
         'Venue Manager/Owner' => 'Venue',
         'Other' => 'Talent',
+        'Sonlight Drama Team' => 'Sonlight',
     ];
     $selectedRoles = isset($_POST["roles"]) ? $_POST["roles"] : [];
     $involvementTypes = [];
