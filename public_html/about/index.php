@@ -84,6 +84,15 @@
   }
   .hover-menu-link:hover { background: rgba(107,63,160,0.15); color: var(--white) !important; }
 
+  /* ── NAV ACCOUNT WIDGET — see /techniques/nav-account-widget.md ── */
+  .nav-account { display: flex; align-items: center; gap: 18px; }
+  .nav-logged-out { display: flex; align-items: center; gap: 18px; }
+  .nav-logged-in { display: none; }
+  .nav-clock {
+    font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.06em;
+    color: var(--muted); min-width: 58px; text-align: right; white-space: nowrap;
+  }
+
   main { flex: 1; position: relative; z-index: 1; }
   section { padding: 80px 0; border-top: 1px solid var(--purple-dim); }
   section:first-of-type { border-top: none; padding-top: 90px; }
@@ -146,6 +155,10 @@
     .nav-links .nav-cta { text-align: center; margin-top: 8px; }
     .nav-hover-panel { position: static; padding-top: 0; }
     .nav-hover-panel-inner { width: 100%; box-shadow: none; }
+    .nav-account { flex-direction: column; align-items: stretch; gap: 0; }
+    .nav-logged-out { flex-direction: column; align-items: stretch; gap: 0; }
+    .nav-logged-in > a { padding: 14px 4px; display: block; }
+    .nav-clock { text-align: center; padding: 14px 4px; }
   }
   @media (max-width: 600px) {
     .model-grid { grid-template-columns: 1fr; }
@@ -165,16 +178,6 @@
     <a href="/">Home</a>
     <a href="/#events">Events</a>
     <div class="nav-hover">
-      <a href="#">I Have...</a>
-      <div class="nav-hover-panel">
-        <div class="nav-hover-panel-inner" style="padding: 10px; width: 220px;">
-          <a href="/performers/" class="hover-menu-link">🎭 Talent to Offer</a>
-          <a href="/venues/" class="hover-menu-link">🏛️ A Venue</a>
-          <a href="/affiliates/" class="hover-menu-link">🎟️ A Network to Share</a>
-        </div>
-      </div>
-    </div>
-    <div class="nav-hover">
       <a href="/subscribe/">Subscribe</a>
       <div class="nav-hover-panel">
         <div class="nav-hover-panel-inner">
@@ -187,20 +190,35 @@
         </div>
       </div>
     </div>
-    <div class="nav-hover">
-      <a href="/join/login.php">Log In</a>
-      <div class="nav-hover-panel">
-        <div class="nav-hover-panel-inner">
-          <form action="/join/LoginProcess.php" method="post">
-            <input type="email" name="email" placeholder="Email address" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Log In ✦</button>
-            <a href="/join/ForgotPassword.php" class="hover-link">Forgot Password?</a>
-          </form>
+
+    <div class="nav-account" id="navAccount">
+      <div class="nav-logged-out" id="navLoggedOut">
+        <a href="/join/" class="nav-cta">Sign Up</a>
+        <div class="nav-hover">
+          <a href="/join/login.php">Log In</a>
+          <div class="nav-hover-panel">
+            <div class="nav-hover-panel-inner">
+              <form action="/join/LoginProcess.php" method="post">
+                <input type="email" name="email" placeholder="Email address" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Log In ✦</button>
+                <a href="/join/ForgotPassword.php" class="hover-link">Forgot Password?</a>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="nav-hover nav-logged-in" id="navLoggedIn">
+        <a href="#" id="navUserName">Account</a>
+        <div class="nav-hover-panel">
+          <div class="nav-hover-panel-inner" style="padding: 10px; width: 180px;">
+            <a href="/join/dashboard.php" class="hover-menu-link">📋 Dashboard</a>
+            <a href="/join/logout.php" class="hover-menu-link">🚪 Log Out</a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-clock" id="navClock">--:--</div>
     </div>
-    <a href="/join/" class="nav-cta">Get Involved</a>
   </div>
 </nav>
 
@@ -303,6 +321,40 @@
       navLinksEl.classList.toggle('open');
     });
   }
+
+  // Nav clock — see /techniques/nav-account-widget.md
+  (function() {
+    const clockEl = document.getElementById('navClock');
+    if (!clockEl) return;
+    function updateClock() {
+      const now = new Date();
+      let h = now.getHours();
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12; if (h === 0) h = 12;
+      clockEl.textContent = h + ':' + m + ' ' + ampm;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  })();
+
+  // Nav account state
+  (function() {
+    const loggedOutEl = document.getElementById('navLoggedOut');
+    const loggedInEl = document.getElementById('navLoggedIn');
+    const nameEl = document.getElementById('navUserName');
+    if (!loggedOutEl || !loggedInEl) return;
+    fetch('/join/whoami.php', { credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(data => {
+        if (data && data.loggedIn) {
+          loggedOutEl.style.display = 'none';
+          loggedInEl.style.display = 'block';
+          if (nameEl) nameEl.textContent = data.name + ' ▾';
+        }
+      })
+      .catch(() => {});
+  })();
 
   // Affiliate/referral tracking — carry ?id= through to the join form
   (function() {
