@@ -31,7 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['person_id'] = $user['id'];
                 mysqli_stmt_close($stmt);
                 mysqli_close($conn);
-                header("Location: dashboard.php");
+                // Allow a return_url posted by the login form (same-site paths only)
+                $returnUrl = isset($_POST['return_url']) ? trim($_POST['return_url']) : '';
+                if ($returnUrl !== '' && preg_match('#^/[^/]#', $returnUrl)) {
+                    header("Location: " . $returnUrl);
+                } else {
+                    header("Location: dashboard.php");
+                }
                 exit();
             } else {
                 mysqli_stmt_close($stmt);

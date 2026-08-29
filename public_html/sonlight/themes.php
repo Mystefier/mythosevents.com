@@ -48,6 +48,17 @@
   .nav-dropdown:hover .nav-dropdown-panel { display: block; }
   .nav-dropdown-panel a { display: block; padding: 10px 14px; font-weight: 700; font-size: 14px; color: var(--sun-muted); text-decoration: none; border-radius: 8px; }
   .nav-dropdown-panel a:hover { background: #FFF3E8; color: var(--sun-primary); }
+  .nav-hover { position: relative; }
+  .nav-hover-panel { display: none; position: absolute; top: 100%; right: 0; padding-top: 14px; z-index: 50; }
+  .nav-hover:hover .nav-hover-panel,
+  .nav-hover:focus-within .nav-hover-panel { display: block; }
+  .nav-hover-panel-inner { background: var(--sun-card); border: 2px solid var(--sun-border); border-radius: 12px; padding: 20px; width: 240px; box-shadow: 0 12px 40px rgba(58,46,42,0.12); }
+  .nav-hover-panel-inner input { width: 100%; margin-bottom: 10px; padding: 10px 12px; border-radius: 8px; border: 2px solid var(--sun-border); background: var(--sun-bg); color: var(--sun-text); font-size: 13px; font-family: 'Nunito', sans-serif; }
+  .nav-hover-panel-inner input:focus { outline: none; border-color: var(--sun-primary); }
+  .nav-hover-panel-inner button { width: 100%; padding: 10px; border: none; border-radius: 8px; cursor: pointer; background: var(--sun-primary); color: #fff; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 13px; transition: background 0.2s; }
+  .nav-hover-panel-inner button:hover { background: var(--sun-primary-dk); }
+  .nav-hover-panel-inner .form-footer { text-align: center; margin-top: 10px; font-size: 12px; color: var(--sun-muted); }
+  .nav-hover-panel-inner .form-footer a { color: var(--sun-primary); text-decoration: none; font-weight: 700; }
 
   main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
 
@@ -118,12 +129,25 @@
     <div class="nav-account" id="navAccount">
       <div class="nav-logged-out" id="navLoggedOut">
         <a href="/sonlight/join.php" class="nav-cta">Join the Team</a>
-        <a href="/join/login.php">Log In</a>
+        <div class="nav-hover">
+          <a href="/join/login.php">Log In</a>
+          <div class="nav-hover-panel">
+            <div class="nav-hover-panel-inner">
+              <form action="/join/LoginProcess.php" method="post">
+                <input type="hidden" name="return_url" value="/sonlight/dashboard.php">
+                <input type="email" name="email" placeholder="Email" required autocomplete="email">
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Log In ☀️</button>
+                <div class="form-footer"><a href="/join/ForgotPassword.php">Forgot password?</a></div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="nav-dropdown nav-logged-in" id="navLoggedIn">
         <a href="#" id="navUserName">Account ▾</a>
         <div class="nav-dropdown-panel">
-          <a href="/join/dashboard.php">📋 Dashboard</a>
+          <a href="/sonlight/dashboard.php">📋 Dashboard</a>
           <a href="/sonlight/scheduler.php">☀️ Scheduler</a>
           <a href="/join/logout.php">🚪 Log Out</a>
         </div>
