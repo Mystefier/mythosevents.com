@@ -22,6 +22,16 @@ if (!$result || mysqli_num_rows($result) === 0) {
 
 $person = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
+
+// Load group memberships from the dedicated table
+$grpStmt = mysqli_prepare($conn, "SELECT g.name, g.icon, g.join_url FROM group_memberships gm JOIN `groups` g ON gm.group_id = g.id WHERE gm.person_id = ?");
+mysqli_stmt_bind_param($grpStmt, "i", $personId);
+mysqli_stmt_execute($grpStmt);
+$grpResult = mysqli_stmt_get_result($grpStmt);
+$userGroups = [];
+while ($row = mysqli_fetch_assoc($grpResult)) { $userGroups[] = $row; }
+mysqli_stmt_close($grpStmt);
+
 mysqli_close($conn);
 
 $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['roles'])) : [];
@@ -174,9 +184,23 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Operations" <?php echo in_array('Operations', $selectedRoles) ? 'checked' : ''; ?>><span>⚙️ Operations</span></label>
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Venue Manager/Owner" <?php echo in_array('Venue Manager/Owner', $selectedRoles) ? 'checked' : ''; ?>><span>🏛️ Venue Manager/Owner</span></label>
           <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Other" <?php echo in_array('Other', $selectedRoles) ? 'checked' : ''; ?>><span>✨ Something Else</span></label>
-          <label class="checkbox-item"><input type="checkbox" name="roles[]" value="Sonlight Drama Team" <?php echo in_array('Sonlight Drama Team', $selectedRoles) ? 'checked' : ''; ?>><span>☀️ Sonlight Drama Team</span></label>
         </div>
       </div>
+
+      <?php if ($userGroups): ?>
+      <div class="form-section">
+        <div class="section-label">Your Groups</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <?php foreach ($userGroups as $grp): ?>
+          <div style="display:flex;align-items:center;gap:12px;background:var(--gold-dim);border:1px solid rgba(232,197,71,0.3);border-radius:10px;padding:14px 18px;">
+            <span style="font-size:22px;"><?php echo htmlspecialchars($grp['icon']); ?></span>
+            <span style="font-size:15px;color:var(--white);font-weight:600;"><?php echo htmlspecialchars($grp['name']); ?></span>
+          </div>
+          <?php endforeach; ?>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-top:12px;">Group memberships are managed separately. Visit a group's page to join or leave.</p>
+      </div>
+      <?php endif; ?>
 
       <div class="form-section">
         <div class="section-label">Where Are You Available to Work?</div>

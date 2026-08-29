@@ -10,13 +10,17 @@ include('../join/logintodatabase.php');
 
 $personId = intval($_SESSION['person_id']);
 
-$stmt = mysqli_prepare($conn, "SELECT first, roles FROM people WHERE id = ?");
+$stmt = mysqli_prepare($conn, "SELECT first FROM people WHERE id = ?");
 mysqli_stmt_bind_param($stmt, "i", $personId);
 mysqli_stmt_execute($stmt);
 $person = mysqli_stmt_get_result($stmt)->fetch_assoc();
 mysqli_stmt_close($stmt);
 
-$isSonlightMember = $person && strpos((string)$person['roles'], 'Sonlight Drama Team') !== false;
+$memStmt = mysqli_prepare($conn, "SELECT 1 FROM group_memberships gm JOIN `groups` g ON gm.group_id = g.id WHERE gm.person_id = ? AND g.slug = 'sonlight'");
+mysqli_stmt_bind_param($memStmt, "i", $personId);
+mysqli_stmt_execute($memStmt);
+$isSonlightMember = $person && mysqli_stmt_get_result($memStmt)->num_rows > 0;
+mysqli_stmt_close($memStmt);
 
 $statusMessage = '';
 $statusType = '';
@@ -235,8 +239,8 @@ mysqli_close($conn);
   <?php if (!$isSonlightMember): ?>
     <div class="gate-card">
       <h3 style="margin-bottom:10px;">This One's for Sonlight Members</h3>
-      <p>Add "Sonlight Drama Team" to your roles on your Mythos Events profile to get access to the scheduler.</p>
-      <a href="/join/edit-profile.php" class="btn btn-primary">Update My Profile</a>
+      <p>You need to be a Sonlight member to use the scheduler. Join the team and you'll be added automatically.</p>
+      <a href="/sonlight/join.php" class="btn btn-primary">Join Sonlight</a>
     </div>
   <?php else: ?>
 

@@ -29,18 +29,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $serviceAreaLongitude = ($serviceAreaAddress !== '' && isset($_POST["serviceAreaLongitude"]) && $_POST["serviceAreaLongitude"] !== '') ? floatval($_POST["serviceAreaLongitude"]) : null;
     $serviceAreaRadius = $serviceAreaAddress !== '' ? (isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30) : null;
 
-    // Derive involvement type from roles, same mapping used at signup
+    // Derive involvement type from core Mythos roles (group memberships live in group_memberships table)
     $roleToInvolvementType = [
-        'Vendor' => 'Vendor',
-        'Organizer' => 'Organizer',
-        'volunteer' => 'Talent',
-        'Sales' => 'Affiliate',
-        'Performer' => 'Talent',
-        'Artist' => 'Talent',
-        'Operations' => 'Talent',
+        'Vendor'              => 'Vendor',
+        'Organizer'           => 'Organizer',
+        'volunteer'           => 'Talent',
+        'Sales'               => 'Affiliate',
+        'Performer'           => 'Talent',
+        'Artist'              => 'Talent',
+        'Operations'          => 'Talent',
         'Venue Manager/Owner' => 'Venue',
-        'Other' => 'Talent',
-        'Sonlight Drama Team' => 'Sonlight',
+        'Other'               => 'Talent',
     ];
     $selectedRoles = isset($_POST["roles"]) ? $_POST["roles"] : [];
     $involvementTypes = [];

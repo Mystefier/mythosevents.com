@@ -41,18 +41,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $serviceAreaLongitude = ($serviceAreaAddress !== '' && isset($_POST["serviceAreaLongitude"]) && $_POST["serviceAreaLongitude"] !== '') ? floatval($_POST["serviceAreaLongitude"]) : null;
     $serviceAreaRadius = $serviceAreaAddress !== '' ? (isset($_POST["serviceAreaRadius"]) ? intval($_POST["serviceAreaRadius"]) : 30) : null;
 
-    // Involvement type — derived from the selected roles so we don't ask twice
+    // Group membership — handled separately via group_memberships table, not roles
+    $source = isset($_POST["source"]) ? preg_replace('/[^a-z0-9_-]/', '', strtolower($_POST["source"])) : '';
+
+    // Involvement type — derived from core Mythos roles only
     $roleToInvolvementType = [
-        'Vendor' => 'Vendor',
-        'Organizer' => 'Organizer',
-        'volunteer' => 'Talent',
-        'Sales' => 'Affiliate',
-        'Performer' => 'Talent',
-        'Artist' => 'Talent',
-        'Operations' => 'Talent',
+        'Vendor'              => 'Vendor',
+        'Organizer'           => 'Organizer',
+        'volunteer'           => 'Talent',
+        'Sales'               => 'Affiliate',
+        'Performer'           => 'Talent',
+        'Artist'              => 'Talent',
+        'Operations'          => 'Talent',
         'Venue Manager/Owner' => 'Venue',
-        'Other' => 'Talent',
-        'Sonlight Drama Team' => 'Sonlight',
+        'Other'               => 'Talent',
     ];
     $selectedRoles = isset($_POST["roles"]) ? $_POST["roles"] : [];
     $involvementTypes = [];
@@ -108,6 +110,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $recentlyAddedId = mysqli_insert_id($conn);
             }
             mysqli_stmt_close($stmt);
+
+            // If signup came from a group join form, record membership in group_memberships
+            if ($source !== '') {
+                $grpStmt = mysqli_prepare($conn, "SELECT id FROM `groups` WHERE slug = ?");
+                mysqli_stmt_bind_param($grpStmt, "s", $source);
+                mysqli_stmt_execute($grpStmt);
+                $grpRow = mysqli_fetch_assoc(mysqli_stmt_get_result($grpStmt));
+                mysqli_stmt_close($grpStmt);
+                if ($grpRow) {
+                    $memStmt = mysqli_prepare($conn, "INSERT IGNORE INTO group_memberships (person_id, group_id) VALUES (?, ?)");
+                    mysqli_stmt_bind_param($memStmt, "ii", $recentlyAddedId, $grpRow['id']);
+                    mysqli_stmt_execute($memStmt);
+                    mysqli_stmt_close($memStmt);
+                }
+            }
 
             // Create the link with the ID variable
             $shareLink = "https://mythosevents.com/join/?id=" . $recentlyAddedId;

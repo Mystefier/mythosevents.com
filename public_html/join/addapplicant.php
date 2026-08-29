@@ -270,8 +270,10 @@ mysqli_close($conn);
 
   <div class="form-card">
     <form action="submit.php" method="post" onsubmit="return validateForm()">
+      <?php if ($source): ?>
+      <input type="hidden" name="source" value="<?php echo htmlspecialchars($source); ?>">
+      <?php endif; ?>
       <?php if ($source === 'sonlight'): ?>
-      <input type="hidden" name="roles[]" value="Sonlight Drama Team">
       <div style="background:#FFF3E8;border:2px solid #FFC145;border-radius:12px;padding:18px 22px;margin-bottom:32px;display:flex;align-items:center;gap:14px;">
         <span style="font-size:28px;">☀️</span>
         <div>
