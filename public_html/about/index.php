@@ -37,6 +37,12 @@
   }
   .nav-logo { font-family: 'Cinzel', serif; font-weight: 900; font-size: 20px; color: var(--white); letter-spacing: 0.05em; text-decoration: none; }
   .nav-logo span { color: var(--gold); }
+  .nav-left { display: flex; align-items: center; gap: 24px; }
+  .nav-about-link {
+    color: var(--lilac); text-decoration: none; font-size: 14px;
+    letter-spacing: 0.08em; transition: color 0.2s;
+  }
+  .nav-about-link:hover { color: var(--white); }
   .nav-links { display: flex; gap: 32px; align-items: center; }
   .nav-links a { color: var(--lilac); text-decoration: none; font-size: 14px; letter-spacing: 0.08em; transition: color 0.2s; }
   .nav-links a:hover { color: var(--white); }
@@ -170,12 +176,14 @@
 <div id="stars"></div>
 
 <nav>
-  <a href="/" class="nav-logo">Mythos<span>✦</span>Events</a>
+  <div class="nav-left">
+    <a href="/" class="nav-logo">Mythos<span>✦</span>Events</a>
+    <a href="/" class="nav-about-link">Home</a>
+  </div>
   <button type="button" class="nav-toggle" id="navToggle" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-links" id="navLinks">
-    <a href="/">Home</a>
     <a href="/#events">Events</a>
     <div class="nav-hover">
       <a href="/subscribe/">Subscribe</a>
@@ -193,7 +201,7 @@
 
     <div class="nav-account" id="navAccount">
       <div class="nav-logged-out" id="navLoggedOut">
-        <a href="/join/" class="nav-cta">Sign Up</a>
+        <a href="/join/" class="nav-cta">Join the Team</a>
         <div class="nav-hover">
           <a href="/join/login.php">Log In</a>
           <div class="nav-hover-panel">
