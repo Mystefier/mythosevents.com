@@ -40,6 +40,17 @@
     background: var(--sun-primary); color: #fff !important; padding: 10px 22px; border-radius: 30px;
   }
   .nav-cta:hover { background: var(--sun-primary-dk) !important; }
+  .nav-account { display: flex; align-items: center; gap: 20px; }
+  .nav-logged-out { display: flex; align-items: center; gap: 20px; }
+  .nav-logged-in { display: none; position: relative; }
+  .nav-clock { font-family: 'Poppins', sans-serif; font-size: 13px; letter-spacing: 0.06em; color: var(--sun-muted); min-width: 58px; text-align: right; white-space: nowrap; }
+  .nav-dropdown { position: relative; }
+  .nav-dropdown > a { color: var(--sun-text); text-decoration: none; font-weight: 700; font-size: 14px; }
+  .nav-dropdown > a:hover { color: var(--sun-primary); }
+  .nav-dropdown-panel { display: none; position: absolute; right: 0; top: calc(100% + 14px); background: var(--sun-card); border: 2px solid var(--sun-border); border-radius: 12px; padding: 8px; min-width: 160px; z-index: 100; box-shadow: 0 8px 24px rgba(58,46,42,0.1); }
+  .nav-dropdown:hover .nav-dropdown-panel { display: block; }
+  .nav-dropdown-panel a { display: block; padding: 10px 14px; font-weight: 700; font-size: 14px; color: var(--sun-muted); text-decoration: none; border-radius: 8px; }
+  .nav-dropdown-panel a:hover { background: #FFF3E8; color: var(--sun-primary); }
 
   main { flex: 1; }
   .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px; }
@@ -95,6 +106,10 @@
     nav { padding: 0 20px; }
     .nav-links { gap: 14px; }
     .value-grid, .steps-grid { grid-template-columns: 1fr; }
+    .nav-account { flex-direction: column; align-items: stretch; gap: 0; }
+    .nav-logged-out { flex-direction: column; align-items: stretch; gap: 0; }
+    .nav-logged-in > a { padding: 14px 4px; display: block; }
+    .nav-clock { text-align: center; padding: 14px 4px; }
   }
 </style>
 </head>
@@ -105,8 +120,21 @@
   <div class="nav-links">
     <a href="/sonlight/scheduler.php">Scheduler</a>
     <a href="/sonlight/themes.php">Theme Picker</a>
-    <a href="/join/login.php">Log In</a>
-    <a href="/sonlight/join.php" class="nav-cta">Join the Team</a>
+    <div class="nav-account" id="navAccount">
+      <div class="nav-logged-out" id="navLoggedOut">
+        <a href="/sonlight/join.php" class="nav-cta">Join the Team</a>
+        <a href="/join/login.php">Log In</a>
+      </div>
+      <div class="nav-dropdown nav-logged-in" id="navLoggedIn">
+        <a href="#" id="navUserName">Account ▾</a>
+        <div class="nav-dropdown-panel">
+          <a href="/join/dashboard.php">📋 Dashboard</a>
+          <a href="/sonlight/scheduler.php">☀️ Scheduler</a>
+          <a href="/join/logout.php">🚪 Log Out</a>
+        </div>
+      </div>
+      <div class="nav-clock" id="navClock">--:--</div>
+    </div>
   </div>
 </nav>
 
@@ -114,7 +142,7 @@
 
   <section class="hero">
     <div class="wrap">
-      <div class="eyebrow">A Mythos Events Group</div>
+      <div class="eyebrow">Drama Team</div>
       <h1 class="title">Son<span>light</span> Drama Team</h1>
       <p>A weekly gathering to explore faith and theater side by side — one person brings a Bible question, one brings a theater question, and we dig into both together.</p>
       <div class="hero-cta">
@@ -178,5 +206,24 @@
   <p>Sonlight Drama Team &nbsp;·&nbsp; part of <a href="/">Mythos Events</a> &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">Questions?</a></p>
 </footer>
 
+<script>
+(function() {
+  const clockEl = document.getElementById('navClock');
+  if (!clockEl) return;
+  function tick() {
+    const now = new Date(), m = String(now.getMinutes()).padStart(2,'0');
+    let h = now.getHours(); const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+    clockEl.textContent = h + ':' + m + ' ' + ampm;
+  }
+  tick(); setInterval(tick, 1000);
+})();
+(function() {
+  const lo = document.getElementById('navLoggedOut'), li = document.getElementById('navLoggedIn'), nm = document.getElementById('navUserName');
+  if (!lo || !li) return;
+  fetch('/join/whoami.php', { credentials: 'same-origin' }).then(r => r.json()).then(d => {
+    if (d && d.loggedIn) { lo.style.display = 'none'; li.style.display = 'block'; if (nm) nm.textContent = d.name + ' ▾'; }
+  }).catch(() => {});
+})();
+</script>
 </body>
 </html>

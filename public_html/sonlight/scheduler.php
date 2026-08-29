@@ -1,26 +1,29 @@
 <?php
 session_start();
-if (!isset($_SESSION['person_id'])) {
-    header("Location: /join/login.php");
-    exit();
-}
 
 $dbname = "db9dh4gg0yfw3q";
 include('../join/logintodatabase.php');
 
-$personId = intval($_SESSION['person_id']);
+$isLoggedIn = isset($_SESSION['person_id']);
+$personId = $isLoggedIn ? intval($_SESSION['person_id']) : 0;
+$person = null;
+$isSonlightMember = false;
 
-$stmt = mysqli_prepare($conn, "SELECT first FROM people WHERE id = ?");
-mysqli_stmt_bind_param($stmt, "i", $personId);
-mysqli_stmt_execute($stmt);
-$person = mysqli_stmt_get_result($stmt)->fetch_assoc();
-mysqli_stmt_close($stmt);
+if ($isLoggedIn && $personId > 0) {
+    $stmt = mysqli_prepare($conn, "SELECT first FROM people WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $personId);
+    mysqli_stmt_execute($stmt);
+    $person = mysqli_stmt_get_result($stmt)->fetch_assoc();
+    mysqli_stmt_close($stmt);
 
-$memStmt = mysqli_prepare($conn, "SELECT 1 FROM group_memberships gm JOIN `groups` g ON gm.group_id = g.id WHERE gm.person_id = ? AND g.slug = 'sonlight'");
-mysqli_stmt_bind_param($memStmt, "i", $personId);
-mysqli_stmt_execute($memStmt);
-$isSonlightMember = $person && mysqli_stmt_get_result($memStmt)->num_rows > 0;
-mysqli_stmt_close($memStmt);
+    if ($person) {
+        $memStmt = mysqli_prepare($conn, "SELECT 1 FROM group_memberships gm JOIN `groups` g ON gm.group_id = g.id WHERE gm.person_id = ? AND g.slug = 'sonlight'");
+        mysqli_stmt_bind_param($memStmt, "i", $personId);
+        mysqli_stmt_execute($memStmt);
+        $isSonlightMember = mysqli_stmt_get_result($memStmt)->num_rows > 0;
+        mysqli_stmt_close($memStmt);
+    }
+}
 
 $statusMessage = '';
 $statusType = '';
@@ -155,8 +158,22 @@ mysqli_close($conn);
   }
   .nav-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 19px; color: var(--sun-text); text-decoration: none; }
   .nav-logo span { color: var(--sun-primary); }
-  .nav-back { font-size: 14px; color: var(--sun-muted); text-decoration: none; font-weight: 600; }
-  .nav-back:hover { color: var(--sun-primary); }
+  .nav-links { display: flex; gap: 20px; align-items: center; }
+  .nav-links a { font-size: 14px; color: var(--sun-muted); text-decoration: none; font-weight: 700; }
+  .nav-links a:hover { color: var(--sun-primary); }
+  .nav-cta { background: var(--sun-primary); color: #fff !important; padding: 9px 20px; border-radius: 30px; }
+  .nav-cta:hover { background: var(--sun-primary-dk) !important; }
+  .nav-account { display: flex; align-items: center; gap: 20px; }
+  .nav-logged-out { display: flex; align-items: center; gap: 20px; }
+  .nav-logged-in { display: none; position: relative; }
+  .nav-clock { font-family: 'Poppins', sans-serif; font-size: 13px; letter-spacing: 0.06em; color: var(--sun-muted); min-width: 58px; text-align: right; white-space: nowrap; }
+  .nav-dropdown { position: relative; }
+  .nav-dropdown > a { color: var(--sun-text); text-decoration: none; font-weight: 700; font-size: 14px; }
+  .nav-dropdown > a:hover { color: var(--sun-primary); }
+  .nav-dropdown-panel { display: none; position: absolute; right: 0; top: calc(100% + 14px); background: var(--sun-card); border: 2px solid var(--sun-border); border-radius: 12px; padding: 8px; min-width: 160px; z-index: 100; box-shadow: 0 8px 24px rgba(58,46,42,0.1); }
+  .nav-dropdown:hover .nav-dropdown-panel { display: block; }
+  .nav-dropdown-panel a { display: block; padding: 10px 14px; font-weight: 700; font-size: 14px; color: var(--sun-muted); text-decoration: none; border-radius: 8px; }
+  .nav-dropdown-panel a:hover { background: #FFF3E8; color: var(--sun-primary); }
   main { flex: 1; max-width: 780px; margin: 0 auto; padding: 48px 20px 80px; width: 100%; }
   .page-header { text-align: center; margin-bottom: 36px; }
   .eyebrow { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.15em; color: var(--sun-primary); text-transform: uppercase; margin-bottom: 10px; }
@@ -215,6 +232,10 @@ mysqli_close($conn);
   @media (max-width: 600px) {
     nav { padding: 0 20px; }
     .slot-grid { grid-template-columns: 1fr; }
+    .nav-account { flex-direction: column; align-items: stretch; gap: 0; }
+    .nav-logged-out { flex-direction: column; align-items: stretch; gap: 0; }
+    .nav-logged-in > a { padding: 14px 4px; display: block; }
+    .nav-clock { text-align: center; padding: 14px 4px; }
   }
 </style>
 </head>
@@ -222,7 +243,23 @@ mysqli_close($conn);
 
 <nav>
   <a href="/sonlight/" class="nav-logo">Son<span>light</span></a>
-  <a href="/sonlight/" class="nav-back">← Back</a>
+  <div class="nav-links">
+    <a href="/sonlight/themes.php">Theme Picker</a>
+    <div class="nav-account" id="navAccount">
+      <div class="nav-logged-out" id="navLoggedOut">
+        <a href="/sonlight/join.php" class="nav-cta">Join the Team</a>
+        <a href="/join/login.php">Log In</a>
+      </div>
+      <div class="nav-dropdown nav-logged-in" id="navLoggedIn">
+        <a href="#" id="navUserName">Account ▾</a>
+        <div class="nav-dropdown-panel">
+          <a href="/join/dashboard.php">📋 Dashboard</a>
+          <a href="/join/logout.php">🚪 Log Out</a>
+        </div>
+      </div>
+      <div class="nav-clock" id="navClock">--:--</div>
+    </div>
+  </div>
 </nav>
 
 <main>
@@ -238,9 +275,18 @@ mysqli_close($conn);
 
   <?php if (!$isSonlightMember): ?>
     <div class="gate-card">
-      <h3 style="margin-bottom:10px;">This One's for Sonlight Members</h3>
-      <p>You need to be a Sonlight member to use the scheduler. Join the team and you'll be added automatically.</p>
-      <a href="/sonlight/join.php" class="btn btn-primary">Join Sonlight</a>
+      <?php if (!$isLoggedIn): ?>
+        <h3 style="margin-bottom:10px;">☀️ Stage Scheduler</h3>
+        <p>Log in to claim a Sunday, or join the Sonlight Drama Team to get started.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="/join/login.php" class="btn btn-primary">Log In</a>
+          <a href="/sonlight/join.php" class="btn btn-ghost">Join Sonlight</a>
+        </div>
+      <?php else: ?>
+        <h3 style="margin-bottom:10px;">This One's for Sonlight Members</h3>
+        <p>You need to be a Sonlight member to use the scheduler. Join the team and you'll be added automatically.</p>
+        <a href="/sonlight/join.php" class="btn btn-primary">Join Sonlight</a>
+      <?php endif; ?>
     </div>
   <?php else: ?>
 
@@ -360,8 +406,27 @@ mysqli_close($conn);
 </main>
 
 <footer>
-  <p>Sonlight Drama Team &nbsp;·&nbsp; a Mythos Events group &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">Questions?</a></p>
+  <p>Sonlight Drama Team &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">Questions?</a></p>
 </footer>
 
+<script>
+(function() {
+  const clockEl = document.getElementById('navClock');
+  if (!clockEl) return;
+  function tick() {
+    const now = new Date(), m = String(now.getMinutes()).padStart(2,'0');
+    let h = now.getHours(); const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+    clockEl.textContent = h + ':' + m + ' ' + ampm;
+  }
+  tick(); setInterval(tick, 1000);
+})();
+(function() {
+  const lo = document.getElementById('navLoggedOut'), li = document.getElementById('navLoggedIn'), nm = document.getElementById('navUserName');
+  if (!lo || !li) return;
+  fetch('/join/whoami.php', { credentials: 'same-origin' }).then(r => r.json()).then(d => {
+    if (d && d.loggedIn) { lo.style.display = 'none'; li.style.display = 'block'; if (nm) nm.textContent = d.name + ' ▾'; }
+  }).catch(() => {});
+})();
+</script>
 </body>
 </html>

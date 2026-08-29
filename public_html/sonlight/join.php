@@ -31,8 +31,10 @@
   }
   .nav-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 20px; color: var(--sun-text); text-decoration: none; }
   .nav-logo span { color: var(--sun-primary); }
-  .nav-back { font-size: 14px; color: var(--sun-muted); text-decoration: none; font-weight: 700; }
-  .nav-back:hover { color: var(--sun-primary); }
+  .nav-right { display: flex; align-items: center; gap: 20px; }
+  .nav-right a { font-size: 14px; color: var(--sun-muted); text-decoration: none; font-weight: 700; }
+  .nav-right a:hover { color: var(--sun-primary); }
+  .nav-clock { font-family: 'Poppins', sans-serif; font-size: 13px; letter-spacing: 0.06em; color: var(--sun-muted); min-width: 58px; text-align: right; white-space: nowrap; }
 
   main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
   .card {
@@ -98,7 +100,10 @@
 
 <nav>
   <a href="/sonlight/" class="nav-logo">Son<span>light</span></a>
-  <a href="/sonlight/" class="nav-back">← Back</a>
+  <div class="nav-right">
+    <a href="/join/login.php">Log In</a>
+    <div class="nav-clock" id="navClock">--:--</div>
+  </div>
 </nav>
 
 <main>
@@ -138,5 +143,17 @@
   <p>Sonlight Drama Team &nbsp;·&nbsp; part of <a href="/">Mythos Events</a> &nbsp;·&nbsp; Already have an account? <a href="/join/login.php">Log in</a></p>
 </footer>
 
+<script>
+(function() {
+  const clockEl = document.getElementById('navClock');
+  if (!clockEl) return;
+  function tick() {
+    const now = new Date(), m = String(now.getMinutes()).padStart(2,'0');
+    let h = now.getHours(); const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+    clockEl.textContent = h + ':' + m + ' ' + ampm;
+  }
+  tick(); setInterval(tick, 1000);
+})();
+</script>
 </body>
 </html>
