@@ -104,8 +104,9 @@
   <a href="/sonlight/" class="nav-logo">Son<span>light</span></a>
   <div class="nav-links">
     <a href="/sonlight/scheduler.php">Scheduler</a>
+    <a href="/sonlight/themes.php">Theme Picker</a>
     <a href="/join/login.php">Log In</a>
-    <a href="/join/" class="nav-cta">Join the Team</a>
+    <a href="/sonlight/join.php" class="nav-cta">Join the Team</a>
   </div>
 </nav>
 
@@ -118,7 +119,7 @@
       <p>A weekly gathering to explore faith and theater side by side — one person brings a Bible question, one brings a theater question, and we dig into both together.</p>
       <div class="hero-cta">
         <a href="/sonlight/scheduler.php" class="btn btn-primary">☀️ Open the Stage Scheduler</a>
-        <a href="/join/" class="btn btn-outline">Join the Team</a>
+        <a href="/sonlight/join.php" class="btn btn-outline">Join the Team</a>
       </div>
     </div>
   </section>
@@ -166,8 +167,8 @@
   <section class="cta-section">
     <div class="wrap">
       <div class="section-title">Ready to Join In?</div>
-      <p>Sign up through Mythos Events and check "Sonlight Drama Team" as one of your roles — takes about two minutes.</p>
-      <a href="/join/" class="btn btn-primary">Join the Team ✦</a>
+      <p>Create your Mythos Events profile and you'll be added to Sonlight automatically — takes about two minutes.</p>
+      <a href="/sonlight/join.php" class="btn btn-primary">Join the Team ✦</a>
     </div>
   </section>
 

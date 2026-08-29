@@ -4,6 +4,7 @@ include('logintodatabase.php');
 
 $email = isset($_GET["email"]) ? filter_var($_GET["email"], FILTER_SANITIZE_EMAIL) : '';
 $recruiterId = isset($_GET['id']) && $_GET['id'] !== '' ? $_GET['id'] : '1';
+$source = isset($_GET['source']) ? preg_replace('/[^a-z0-9_-]/', '', strtolower($_GET['source'])) : '';
 
 $errorState = '';
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -269,6 +270,16 @@ mysqli_close($conn);
 
   <div class="form-card">
     <form action="submit.php" method="post" onsubmit="return validateForm()">
+      <?php if ($source === 'sonlight'): ?>
+      <input type="hidden" name="roles[]" value="Sonlight Drama Team">
+      <div style="background:#FFF3E8;border:2px solid #FFC145;border-radius:12px;padding:18px 22px;margin-bottom:32px;display:flex;align-items:center;gap:14px;">
+        <span style="font-size:28px;">☀️</span>
+        <div>
+          <div style="font-weight:700;color:#3A2E2A;font-size:15px;">Joining the Sonlight Drama Team</div>
+          <div style="font-size:13px;color:#8C7B72;margin-top:2px;">You'll automatically be added to Sonlight when you complete this form. Fill in the rest of your profile below.</div>
+        </div>
+      </div>
+      <?php endif; ?>
       <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
       <input type="hidden" name="recruiter" value="<?php echo htmlspecialchars($recruiterId); ?>">
 
@@ -356,10 +367,6 @@ mysqli_close($conn);
           <label class="checkbox-item">
             <input type="checkbox" name="roles[]" value="Other">
             <span>✨ Something Else</span>
-          </label>
-          <label class="checkbox-item">
-            <input type="checkbox" name="roles[]" value="Sonlight Drama Team">
-            <span>☀️ Sonlight Drama Team</span>
           </label>
         </div>
       </div>

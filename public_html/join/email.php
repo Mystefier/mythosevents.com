@@ -9,6 +9,7 @@ $email = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $id = isset($_POST["id"]) ? $_POST["id"] : '';
+    $source = isset($_POST["source"]) ? preg_replace('/[^a-z0-9_-]/', '', strtolower($_POST["source"])) : '';
 
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
@@ -30,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $subject = "Welcome to Mythos Events — Confirm Your Email";
 
             // Confirmation email — inline styles for email client compatibility
-            $confirmLink = 'https://mythosevents.com/join/addapplicant.php?email=' . urlencode($email) . '&id=' . urlencode($id);
+            $confirmLink = 'https://mythosevents.com/join/addapplicant.php?email=' . urlencode($email) . '&id=' . urlencode($id) . ($source ? '&source=' . urlencode($source) : '');
 
             $message = '
 <!DOCTYPE html>
