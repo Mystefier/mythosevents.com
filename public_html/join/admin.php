@@ -21,6 +21,20 @@ if (!$viewer || !$viewer['is_admin']) {
     exit();
 }
 
+// Approve / reject an application
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['application_action'])) {
+    $targetId = intval($_POST['person_id'] ?? 0);
+    $newStatus = $_POST['application_action'] === 'reject' ? 'rejected' : 'approved';
+    if ($targetId) {
+        $updStmt = mysqli_prepare($conn, "UPDATE people SET application_status = ? WHERE id = ?");
+        mysqli_stmt_bind_param($updStmt, "si", $newStatus, $targetId);
+        mysqli_stmt_execute($updStmt);
+        mysqli_stmt_close($updStmt);
+    }
+    header("Location: admin.php" . (isset($_GET['filter']) ? '?filter=' . urlencode($_GET['filter']) : ''));
+    exit();
+}
+
 // Summary stats
 $totalPeople = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FROM people"))['c'];
 $totalVenues = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as c FROM assets WHERE type = 'Venue'"))['c'];
@@ -35,7 +49,7 @@ while ($row = mysqli_fetch_assoc($typeResult)) {
 
 // Filter
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
-$peopleSql = "SELECT id, first, last, email, phone, roles, involvement_type, `date` FROM people";
+$peopleSql = "SELECT id, first, last, email, phone, roles, involvement_type, application_status, `date` FROM people";
 if ($filter === 'pirate') {
     $peopleSql .= " WHERE roles LIKE '%Pirate Walk Through%'";
 } elseif ($filter !== '') {
@@ -226,7 +240,7 @@ mysqli_close($conn);
       <?php if ($people): ?>
       <table>
         <tr>
-          <th>Name</th><th>Email</th><th>Phone</th><th>Roles</th><th>Type</th><th>Signed Up</th>
+          <th>Name</th><th>Email</th><th>Phone</th><th>Roles</th><th>Type</th><th>Signed Up</th><th>Application</th>
         </tr>
         <?php foreach ($people as $p): ?>
         <tr>
@@ -240,6 +254,26 @@ mysqli_close($conn);
           </td>
           <td class="muted-cell"><?php echo htmlspecialchars($p['involvement_type']); ?></td>
           <td class="muted-cell"><?php echo $p['date'] ? date('M j, Y', strtotime($p['date'])) : '—'; ?></td>
+          <td>
+            <?php $status = $p['application_status'] ?? 'approved'; ?>
+            <span class="role-tag" style="<?php echo $status === 'approved' ? 'color:#52C87A;' : ($status === 'rejected' ? 'color:#E05555;' : ''); ?>"><?php echo htmlspecialchars(ucfirst($status)); ?></span>
+            <div style="margin-top:6px;display:flex;gap:6px;">
+              <?php if ($status !== 'approved'): ?>
+              <form method="post" style="display:inline;">
+                <input type="hidden" name="application_action" value="approve">
+                <input type="hidden" name="person_id" value="<?php echo (int)$p['id']; ?>">
+                <button type="submit" style="font-size:11px;padding:4px 8px;background:rgba(82,200,122,0.15);border:1px solid rgba(82,200,122,0.4);color:#52C87A;border-radius:4px;cursor:pointer;">Approve</button>
+              </form>
+              <?php endif; ?>
+              <?php if ($status !== 'rejected'): ?>
+              <form method="post" style="display:inline;" onsubmit="return confirm('Reject this application? They will not be able to log in.');">
+                <input type="hidden" name="application_action" value="reject">
+                <input type="hidden" name="person_id" value="<?php echo (int)$p['id']; ?>">
+                <button type="submit" style="font-size:11px;padding:4px 8px;background:rgba(224,85,85,0.15);border:1px solid rgba(224,85,85,0.4);color:#E05555;border-radius:4px;cursor:pointer;">Reject</button>
+              </form>
+              <?php endif; ?>
+            </div>
+          </td>
         </tr>
         <?php endforeach; ?>
       </table>

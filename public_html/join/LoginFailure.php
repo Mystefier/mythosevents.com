@@ -1,3 +1,7 @@
+<?php
+$reason = isset($_GET['reason']) ? $_GET['reason'] : '';
+$rejected = $reason === 'rejected';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,13 +76,21 @@
 
 <main>
   <div class="wrap">
-    <div class="status-icon">✗</div>
-    <h1>Login Failed</h1>
+    <div class="status-icon"><?php echo $rejected ? '⚠' : '✗'; ?></div>
+    <h1><?php echo $rejected ? 'Account Not Active' : 'Login Failed'; ?></h1>
     <div class="status-card">
-      <p>Your email and password didn't match. Please try again.</p>
+      <?php if ($rejected): ?>
+        <p>This account isn't active. If you think that's a mistake, reach out at <a href="mailto:wadehawkins@mythosevents.com" style="color:var(--purple-lt);">wadehawkins@mythosevents.com</a>.</p>
+      <?php else: ?>
+        <p>Your email and password didn't match. Please try again.</p>
+      <?php endif; ?>
     </div>
-    <a href="login.php" class="btn-primary">Try Again ✦</a>
-    <p class="form-note"><a href="ForgotPassword.php">Forgot Password?</a></p>
+    <?php if (!$rejected): ?>
+      <a href="login.php" class="btn-primary">Try Again ✦</a>
+      <p class="form-note"><a href="ForgotPassword.php">Forgot Password?</a></p>
+    <?php else: ?>
+      <a href="/" class="btn-primary">Back to Home ✦</a>
+    <?php endif; ?>
   </div>
 </main>
 

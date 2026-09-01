@@ -168,6 +168,14 @@ $needsVenueNudge = $hasVenueRole && !$hasVenueAsset;
     <h1><?php echo htmlspecialchars($person['first']); ?>'s Dashboard</h1>
   </div>
 
+  <?php if (($person['application_status'] ?? 'approved') === 'pending'): ?>
+  <div class="welcome-card">
+    <div class="status-icon">⏳</div>
+    <h2>Application Under Review</h2>
+    <p>Thanks for applying — we review new applications before they're fully active. You can still look around and update your profile in the meantime; we'll be in touch soon.</p>
+  </div>
+  <?php endif; ?>
+
   <?php if ($needsVenueNudge): ?>
   <div class="welcome-card">
     <div class="status-icon">🏛️</div>

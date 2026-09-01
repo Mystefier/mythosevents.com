@@ -131,7 +131,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $cardLink = "https://mythosevents.com/card/?id=" . $recentlyAddedId;
 
             // Send email to the submitted address
-            $subject = "You're In! Welcome to the Mythos Events Team";
+            $subject = "Application Received — Mythos Events";
             $safeFirstName = htmlspecialchars($firstName ?: 'there');
             $messageBody = '
 <!DOCTYPE html>

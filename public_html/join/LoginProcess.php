@@ -26,6 +26,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Verify password
             if ($user['password'] && password_verify($password . $user['salt'], $user['password'])) {
+                if (isset($user['application_status']) && $user['application_status'] === 'rejected') {
+                    mysqli_stmt_close($stmt);
+                    mysqli_close($conn);
+                    header("Location: LoginFailure.php?reason=rejected");
+                    exit();
+                }
                 // Regenerate session ID on privilege change to prevent session fixation
                 session_regenerate_id(true);
                 $_SESSION['person_id'] = $user['id'];

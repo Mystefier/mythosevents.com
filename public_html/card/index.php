@@ -6,9 +6,13 @@ $id = isset($_GET['id']) && ctype_digit($_GET['id']) ? intval($_GET['id']) : nul
 
 $person = null;
 if ($id) {
-    $result = mysqli_query($conn, "SELECT id, first, last, email, phone, roles FROM people WHERE id = $id");
+    $result = mysqli_query($conn, "SELECT id, first, last, email, phone, roles, application_status FROM people WHERE id = $id");
     if ($result && mysqli_num_rows($result) > 0) {
-        $person = mysqli_fetch_assoc($result);
+        $row = mysqli_fetch_assoc($result);
+        // Don't show a public card for anyone whose application isn't approved yet
+        if (!isset($row['application_status']) || $row['application_status'] === 'approved') {
+            $person = $row;
+        }
     }
 }
 mysqli_close($conn);
