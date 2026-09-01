@@ -134,7 +134,7 @@
   /* ── HERO ── */
   .hero {
     position: relative; min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
+    display: flex; flex-direction: column; justify-content: flex-start;
     padding: 120px 0 80px; overflow: hidden;
   }
   .hero-bg {
@@ -313,20 +313,22 @@
   /* ── JOIN ── */
   /* ── AUDIENCE CALLOUTS ── */
   .audience-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px;
+    margin: 36px 0 44px; max-width: 960px;
   }
   .audience-card {
-    background: var(--card); border: 1px solid var(--purple-dim); border-radius: 16px;
-    padding: 32px 24px; text-align: center;
+    background: var(--card); border: 1px solid var(--purple-dim); border-radius: 18px;
+    padding: 36px 26px; text-align: center;
     transition: border-color 0.2s, transform 0.2s;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
   }
   .audience-card:hover { border-color: var(--purple); transform: translateY(-4px); }
-  .audience-icon { font-size: 30px; margin-bottom: 14px; }
+  .audience-icon { font-size: 40px; margin-bottom: 16px; }
   .audience-card h3 {
-    font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; color: var(--white);
-    margin-bottom: 8px; text-shadow: 0 0 30px rgba(107,63,160,0.5); line-height: 1.3;
+    font-family: 'Cinzel', serif; font-weight: 900; font-size: 20px; color: var(--white);
+    margin-bottom: 10px; text-shadow: 0 0 30px rgba(107,63,160,0.5); line-height: 1.3;
   }
-  .audience-card p { font-size: 14px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+  .audience-card p { font-size: 15px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
 
   .join-grid {
     display: grid; grid-template-columns: repeat(3, 1fr);
@@ -484,22 +486,7 @@
   <div class="wrap">
     <div class="hero-eyebrow">Glendale, Arizona</div>
     <h1>Where Creators Meet Their Audience</h1>
-    <div class="hero-tagline">Immersive Festivals &nbsp;✦&nbsp; Creative Worlds &nbsp;✦&nbsp; Community Experiences</div>
-    <p class="hero-desc">Mythos Events builds fantasy festivals where the artist is at the table, the performer steps offstage to talk, and the game designer explains the rules they wrote. No glass case. Just people, stories, and wonder.</p>
-    <div class="hero-buttons">
-      <a href="#events" class="btn-primary">See Upcoming Events</a>
-      <a href="/join/" class="btn-secondary">Join the Community</a>
-    </div>
-  </div>
-  <div class="scroll-cue">
-    <span style="font-size:18px">↓</span>
-    <span style="font-size:11px;letter-spacing:0.2em">Explore</span>
-  </div>
-</div>
 
-<!-- AUDIENCE CALLOUTS -->
-<section id="audience">
-  <div class="wrap">
     <div class="audience-grid reveal">
       <div class="audience-card">
         <div class="audience-icon">🎭</div>
@@ -526,8 +513,19 @@
         <a href="/affiliates/" class="btn-primary">Become an Affiliate</a>
       </div>
     </div>
+
+    <div class="hero-tagline">Immersive Festivals &nbsp;✦&nbsp; Creative Worlds &nbsp;✦&nbsp; Community Experiences</div>
+    <p class="hero-desc">Mythos Events builds fantasy festivals where the artist is at the table, the performer steps offstage to talk, and the game designer explains the rules they wrote. No glass case. Just people, stories, and wonder.</p>
+    <div class="hero-buttons">
+      <a href="#events" class="btn-primary">See Upcoming Events</a>
+      <a href="/join/" class="btn-secondary">Join the Community</a>
+    </div>
   </div>
-</section>
+  <div class="scroll-cue">
+    <span style="font-size:18px">↓</span>
+    <span style="font-size:11px;letter-spacing:0.2em">Explore</span>
+  </div>
+</div>
 
 <!-- FEATURED: Pirate Walk Through -->
 <section id="featured">
