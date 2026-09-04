@@ -1,3 +1,25 @@
+<?php
+session_start();
+$logged_in = false;
+$is_approved = false;
+$user_name = '';
+
+if (isset($_SESSION['user_id'])) {
+    include(__DIR__ . '/../join/logintodatabase.php');
+    $user_id = (int)$_SESSION['user_id'];
+    $userStmt = $conn->prepare("SELECT first, application_status FROM people WHERE id = ?");
+    $userStmt->bind_param("i", $user_id);
+    $userStmt->execute();
+    $user = $userStmt->get_result()->fetch_assoc();
+    $userStmt->close();
+    if ($user) {
+        $logged_in = true;
+        $user_name = $user['first'];
+        $is_approved = ($user['application_status'] === 'approved');
+    }
+    $conn->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,6 +87,20 @@
   }
   .btn-primary:hover { background: var(--purple-lt); transform: translateY(-2px); }
 
+  /* DASHBOARD FOR APPROVED ORGANIZERS */
+  .dashboard-section { padding: 40px 20px 70px; background: rgba(107,63,160,0.05); border-top: 1px solid var(--purple-dim); }
+  .dashboard-wrap { max-width: 960px; margin: 0 auto; }
+  .dashboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+  .dashboard-header h2 { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 900; color: var(--white); }
+  .btn-secondary {
+    display: inline-block; background: var(--gold); color: var(--midnight);
+    padding: 12px 24px; border-radius: 8px; text-decoration: none;
+    font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.1em; font-weight: 700;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-secondary:hover { background: #f0d960; transform: translateY(-2px); }
+  .dashboard-note { color: var(--muted); font-size: 14px; margin-top: 8px; }
+
   /* VALUE PROPS */
   .value-section { padding: 40px 20px 70px; }
   .value-wrap { max-width: 960px; margin: 0 auto; }
@@ -120,6 +156,7 @@
 
   @media (max-width: 800px) {
     .value-grid, .steps-grid { grid-template-columns: 1fr; gap: 24px; }
+    .dashboard-header { flex-direction: column; align-items: flex-start; }
   }
   @media (max-width: 600px) {
     nav { padding: 0 20px; }
@@ -137,12 +174,30 @@
 
 <main>
 
+  <?php if ($logged_in && $is_approved): ?>
+    <!-- DASHBOARD FOR APPROVED ORGANIZERS -->
+    <div class="dashboard-section">
+      <div class="dashboard-wrap">
+        <div class="dashboard-header">
+          <div>
+            <h2>Welcome back, <?php echo htmlspecialchars($user_name); ?>! ✦</h2>
+            <p class="dashboard-note">You're approved to post events to the network.</p>
+          </div>
+          <a href="/organizers/post.php" class="btn-secondary">POST AN EVENT</a>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
+
   <div class="hero">
     <div class="eyebrow">For Organizers</div>
     <h1>Run Your Own Event</h1>
     <p>You don't have to build a talent network, a venue list, and an audience from scratch. Plug into ours — from a neighborhood pop-up to a full festival, we give you the pieces to make it happen.</p>
     <div class="hero-cta">
-      <a href="/join/" class="btn-primary">Become an Organizer ✦</a>
+      <?php if (!$logged_in || !$is_approved): ?>
+        <a href="/join/" class="btn-primary">Become an Organizer ✦</a>
+      <?php endif; ?>
+      <a href="/events/" class="btn-primary" style="margin-left: 12px; background: var(--purple-dim); border: 1px solid var(--purple); color: var(--white);">View Events</a>
     </div>
   </div>
 
@@ -184,8 +239,8 @@
         </div>
         <div class="step-item">
           <div class="step-number">3</div>
-          <h3>You Run the Show</h3>
-          <p>It's your event — we're here to make the pieces easier to find, not to take it over.</p>
+          <h3>Post Your Events</h3>
+          <p>Once approved, post your events to the network and connect directly with performers, venues, and attendees.</p>
         </div>
       </div>
     </div>
@@ -209,7 +264,11 @@
     <div class="showcase-wrap">
       <div class="section-title">Ready to Build Something?</div>
       <p>Signing up takes less than two minutes. Tell us what you're picturing, and we'll help you find the pieces to make it real.</p>
-      <a href="/join/" class="btn-primary">Become an Organizer ✦</a>
+      <?php if (!$logged_in || !$is_approved): ?>
+        <a href="/join/" class="btn-primary">Become an Organizer ✦</a>
+      <?php else: ?>
+        <a href="/organizers/post.php" class="btn-primary">Post Your First Event ✦</a>
+      <?php endif; ?>
     </div>
   </div>
 
