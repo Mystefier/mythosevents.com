@@ -1,0 +1,6 @@
+This file was created by Claude (Cowork) from a cloud session to confirm that
+edits made without any local computer can be pushed to GitHub and auto-deployed
+to SiteGround for mythosevents.com, via the existing FTP-Deploy-Action workflow.
+
+Safe to delete once confirmed working.
+Test timestamp: 2026-09-04
