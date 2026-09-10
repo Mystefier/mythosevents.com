@@ -2,8 +2,15 @@
 // Check for form submission
 $status = '';
 $statusType = '';
+require_once('../join/spamcheck.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (is_spam_submission($_POST)) {
+        // Looks like a bot — show the normal success screen but do nothing else.
+        $statusType = 'success';
+        $status = "Thanks for subscribing! We'll send you updates about upcoming Mythos Events.";
+    } else {
+
     $dbname = "db9dh4gg0yfw3q";
     include('../join/logintodatabase.php');
 
@@ -107,6 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     mysqli_close($conn);
+    } // end non-spam branch
 }
 ?>
 <!DOCTYPE html>
@@ -273,6 +281,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               placeholder="your@email.com" required autofocus>
           </div>
           <input type="hidden" id="recruiterInput" name="recruiter" value="">
+          <?php echo spam_honeypot_field(); ?>
           <button type="submit" class="submit-btn">Subscribe ✦</button>
         </form>
         <p class="form-note">We respect your inbox. Expect updates about upcoming events, opportunities to get involved, and occasional special announcements. Unsubscribe anytime.</p>

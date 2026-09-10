@@ -1,8 +1,15 @@
 <?php
 $status = '';
 $statusType = '';
+require_once('../join/spamcheck.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (is_spam_submission($_POST)) {
+        // Looks like a bot — show the normal success screen but do nothing else.
+        $statusType = 'success';
+        $status = "You're signed up! We'll be in touch with details as we get closer to October 31st.";
+    } else {
+
     $dbname = "db9dh4gg0yfw3q";
     include('../join/logintodatabase.php');
 
@@ -92,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     mysqli_close($conn);
+    } // end non-spam branch
 }
 ?>
 <!DOCTYPE html>
@@ -367,6 +375,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <label for="availability">Availability or Notes <span class="label-optional">optional</span></label>
               <textarea id="availability" name="availability" placeholder="Any dates/times you're available to help build, or experience you'd like to mention"></textarea>
             </div>
+            <?php echo spam_honeypot_field(); ?>
             <button type="submit" class="submit-btn">Sign Up to Help ✦</button>
           </form>
         </div>

@@ -193,6 +193,7 @@
             <input type="text" name="firstName" placeholder="First name (optional)">
             <input type="email" name="email" placeholder="Email address" required>
             <input type="hidden" class="nav-recruiter-input" name="recruiter" value="">
+            <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden;"><label>Leave this field blank <input type="text" name="nickname" tabindex="-1" autocomplete="off"></label></div>
             <button type="submit">Subscribe ✦</button>
           </form>
         </div>

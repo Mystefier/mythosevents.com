@@ -1,5 +1,6 @@
 <?php
 $id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : null;
+require_once(__DIR__ . '/spamcheck.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -287,6 +288,7 @@ $id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : null;
             <input type="email" id="email" name="email"
               placeholder="your@email.com" required autofocus>
           </div>
+          <?php echo spam_honeypot_field(); ?>
           <button type="submit" class="submit-btn">Send My Confirmation ✦</button>
         </form>
         <p class="form-note">We'll send you a link to complete your profile. No spam, ever.</p>

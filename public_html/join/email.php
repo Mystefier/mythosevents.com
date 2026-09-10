@@ -1,12 +1,17 @@
 <?php
 $dbname = "db9dh4gg0yfw3q";
 include('logintodatabase.php');
+require_once(__DIR__ . '/spamcheck.php');
 
 $status = '';
 $statusType = '';
 $email = '';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
+    // Looks like a bot — pretend the confirmation email went out, do nothing.
+    $statusType = 'success';
+    $status = "We've sent a confirmation link to your email. Check your inbox and click the link to complete your profile.";
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $id = isset($_POST["id"]) ? $_POST["id"] : '';
     $source = isset($_POST["source"]) ? preg_replace('/[^a-z0-9_-]/', '', strtolower($_POST["source"])) : '';

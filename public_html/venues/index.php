@@ -1,8 +1,15 @@
 <?php
 $status = '';
 $statusType = '';
+require_once('../join/spamcheck.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (is_spam_submission($_POST)) {
+        // Looks like a bot — show the normal success screen but do nothing else.
+        $statusType = 'success';
+        $status = "Thanks for reaching out! We've received your info and will be in touch soon to talk about bringing Mythos Events to your venue.";
+    } else {
+
     $dbname = "db9dh4gg0yfw3q";
     include('../join/logintodatabase.php');
 
@@ -64,6 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     mysqli_close($conn);
+    } // end non-spam branch
 }
 ?>
 <!DOCTYPE html>
@@ -321,6 +329,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <textarea id="message" name="message" placeholder="What kind of venue is it? What's your typical crowd like? What are you hoping to bring in?"></textarea>
             </div>
             <input type="hidden" id="recruiterInput" name="recruiter" value="">
+            <?php echo spam_honeypot_field(); ?>
             <button type="submit" class="submit-btn">Send Inquiry ✦</button>
           </form>
         </div>
