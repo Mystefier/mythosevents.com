@@ -130,7 +130,7 @@
   <div class="hero">
     <div class="eyebrow">Become an Affiliate</div>
     <h1>Turn Your Network Into Rewards</h1>
-    <p>Know people who'd love Mythos Events — as performers, vendors, or just showing up? Get your own personal referral link, share it, and get credit for everyone who joins because of you.</p>
+    <p>Know people who'd love Mythos Events — as performers, vendors, or just showing up? Get your own personal link so we always know it was you who brought them in.</p>
     <div class="hero-cta">
       <a href="/join/" class="btn-primary">Become an Affiliate ✦</a>
     </div>
@@ -147,12 +147,12 @@
         <div class="value-card">
           <div class="value-icon">📊</div>
           <h3>Always Tracked</h3>
-          <p>Anyone who joins, subscribes, or gets involved through your link is automatically credited to you — permanently.</p>
+          <p>Anyone who joins, subscribes, or gets involved through your link is automatically linked back to your account — even if they go on to bring in people of their own.</p>
         </div>
         <div class="value-card">
           <div class="value-icon">💜</div>
-          <h3>Credit That Grows</h3>
-          <p>Even if the people you bring in go on to recruit others, your place in the chain stays intact as our affiliate program grows.</p>
+          <h3>No Ongoing Work</h3>
+          <p>Share your link once — after that, the tracking happens automatically in the background. Nothing more to manage.</p>
         </div>
       </div>
     </div>
@@ -175,7 +175,7 @@
         <div class="step-item">
           <div class="step-number">3</div>
           <h3>Share & Earn Credit</h3>
-          <p>Post it, text it, hand out your card at events — every person who joins through it is credited to you.</p>
+          <p>Post it, text it, hand out your card at events — we'll always know it came from you.</p>
         </div>
       </div>
     </div>

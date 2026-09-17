@@ -300,17 +300,7 @@ mysqli_close($conn);
           </div>
         </div>
 
-        <div class="field-row">
-          <div class="field">
-            <label for="phoneNumber">Phone <span class="label-optional">optional</span></label>
-            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="(555) 000-0000">
-          </div>
-          <div class="field">
-            <label for="dob">Date of Birth <span class="label-optional">optional</span></label>
-            <input type="date" id="dob" name="dob">
-            <p style="font-size:12px;color:var(--muted);margin-top:6px;">Helps us verify age requirements for venues and stay compliant with minor-related regulations.</p>
-          </div>
-        </div>
+        <p style="font-size:13px;color:var(--muted);margin-top:4px;">Phone and date of birth aren't needed to join — add them later from your profile if you want to.</p>
       </div>
 
       <!-- PASSWORD -->
@@ -418,6 +408,7 @@ mysqli_close($conn);
       <button type="submit" id="submitButton" disabled class="submit-btn">
         Complete My Profile ✦
       </button>
+      <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:16px;">By joining, you agree to our <a href="/privacy/" style="color:var(--purple-lt);">Privacy Policy</a>.</p>
     </form>
   </div>
 

@@ -163,7 +163,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <tr><td style="border-top:1px solid rgba(107,63,160,0.25);"></td></tr>
             </table>
 
-            <p style="margin:0 0 16px;font-size:16px;color:#C4A8E8;line-height:1.7;">We need lots more people. Share your personal link below — if a friend joins or subscribes through it, you will be rewarded, and it will always be credited to you:</p>
+            <p style="margin:0 0 16px;font-size:16px;color:#C4A8E8;line-height:1.7;">We need lots more people. Share your personal link below — if a friend joins or subscribes through it, we'll always know it was you who brought them in:</p>
 
             <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
               <tr>

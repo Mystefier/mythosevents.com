@@ -286,7 +286,7 @@
 
       <div class="model-arrow">↓</div>
 
-      <p style="text-align:center; max-width:640px; margin:0 auto;">We match the right talent with the right venue, give organizers the tools and network to run a great event, and let affiliates get credit for everyone they bring in. The result: real events, built by real relationships — not a booking platform, a community.</p>
+      <p style="text-align:center; max-width:640px; margin:0 auto;">We match the right talent with the right venue, give organizers the tools and network to run a great event, and keep track of who affiliates bring in. The result: real events, built by real relationships — not a booking platform, a community.</p>
     </div>
   </section>
 
