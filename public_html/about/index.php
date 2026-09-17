@@ -252,7 +252,7 @@
       <div class="pull-quote">
         <p>"Museums show you what someone made. Festivals let you meet the person who made it."</p>
       </div>
-      <p>Based in Glendale, Arizona. Built for dreamers, families, artists, and anyone who ever wanted to see behind the curtain.</p>
+      <p>Built for dreamers, families, artists, and anyone who ever wanted to see behind the curtain.</p>
     </div>
   </section>
 
@@ -309,7 +309,7 @@
 </main>
 
 <footer>
-  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; Glendale, Arizona &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
+  <p>&copy; 2026 Mythos Events &nbsp;·&nbsp; <a href="mailto:wadehawkins@mythosevents.com">wadehawkins@mythosevents.com</a></p>
 </footer>
 
 <script>

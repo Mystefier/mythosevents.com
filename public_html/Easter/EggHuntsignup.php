@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </tr>
                 <tr>
                   <td align='center' style='padding:28px 0 0;'>
-                    <p style='margin:0;font-size:12px;color:rgba(196,168,232,0.4);letter-spacing:2px;text-transform:uppercase;'>Mythos Events &nbsp;&middot;&nbsp; Glendale, Arizona</p>
+                    <p style='margin:0;font-size:12px;color:rgba(196,168,232,0.4);letter-spacing:2px;text-transform:uppercase;'>Mythos Events</p>
                   </td>
                 </tr>
               </table>
