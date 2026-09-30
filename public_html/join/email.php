@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
     $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $checkStmt = mysqli_prepare($conn, "SELECT password FROM people WHERE email = ?");
+        $checkStmt = mysqli_prepare($conn, "SELECT id, password FROM people WHERE email = ?");
         mysqli_stmt_bind_param($checkStmt, "s", $email);
         mysqli_stmt_execute($checkStmt);
         $result = mysqli_stmt_get_result($checkStmt);
@@ -33,6 +33,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
             $statusType = 'warning';
             $status = "The email <strong>$email</strong> is already in our system. Please use a different address or log in below.";
         } else {
+            // Capture the email right away, before attempting to send anything —
+            // so nobody who tried to join gets lost if the confirmation email
+            // fails to send or lands somewhere they never see it.
+            if (!$existing) {
+                $captureStmt = mysqli_prepare($conn, "INSERT INTO people (email, involvement_type) VALUES (?, 'Started Joining')");
+                mysqli_stmt_bind_param($captureStmt, "s", $email);
+                mysqli_stmt_execute($captureStmt);
+                mysqli_stmt_close($captureStmt);
+            }
+
             $subject = "Welcome to Mythos Events — Confirm Your Email";
 
             // Confirmation email — inline styles for email client compatibility
@@ -105,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
 </body>
 </html>';
 
-            $headers  = "From: confirm@MythosEvents.com\r\n";
+            $headers  = "From: wadehawkins@mythosevents.com\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
             if (mail($email, $subject, $message, $headers)) {

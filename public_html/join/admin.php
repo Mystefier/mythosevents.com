@@ -233,6 +233,7 @@ mysqli_close($conn);
         <a href="admin.php?filter=Affiliate" class="<?php echo $filter === 'Affiliate' ? 'active' : ''; ?>">Affiliate</a>
         <a href="admin.php?filter=Organizer" class="<?php echo $filter === 'Organizer' ? 'active' : ''; ?>">Organizer</a>
         <a href="admin.php?filter=Subscriber" class="<?php echo $filter === 'Subscriber' ? 'active' : ''; ?>">Subscriber</a>
+        <a href="admin.php?filter=Started Joining" class="<?php echo $filter === 'Started Joining' ? 'active' : ''; ?>">⏳ Started Joining (never confirmed)</a>
         <a href="admin.php?filter=pirate" class="<?php echo $filter === 'pirate' ? 'active' : ''; ?>">🏴‍☠️ Pirate Walk Through</a>
       </div>
     </div>
