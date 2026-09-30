@@ -10,9 +10,16 @@ $errorState = '';
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errorState = 'invalid';
 } else {
-    $checkSql = "SELECT * FROM people WHERE email = '$email'";
-    $result = mysqli_query($conn, $checkSql);
-    if (mysqli_num_rows($result) > 0) {
+    // Only a row that already has a password means someone actually finished
+    // registering. A passwordless row (Started Joining capture, a subscriber
+    // stub, etc.) is exactly what should be free to complete this step --
+    // that's the whole point of capturing the email before confirmation.
+    $checkStmt = mysqli_prepare($conn, "SELECT password FROM people WHERE email = ?");
+    mysqli_stmt_bind_param($checkStmt, "s", $email);
+    mysqli_stmt_execute($checkStmt);
+    $existingRow = mysqli_stmt_get_result($checkStmt)->fetch_assoc();
+    mysqli_stmt_close($checkStmt);
+    if ($existingRow && !empty($existingRow['password'])) {
         $errorState = 'already';
     }
 }
