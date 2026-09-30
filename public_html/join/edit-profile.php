@@ -56,6 +56,7 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
     --white:      #FFFFFF;
     --muted:      rgba(196,168,232,0.6);
     --green:      #52C87A;
+    --red:        #E05555;
   }
   html { scroll-behavior: smooth; }
   body {
@@ -110,6 +111,8 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
   .checkbox-item:hover { background: rgba(107,63,160,0.1); border-color: var(--purple); }
   .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--purple); cursor: pointer; padding: 0; margin: 0; }
   .checkbox-item span { font-size: 14px; color: var(--lilac); line-height: 1.3; }
+  .password-match.ok  { color: var(--green); }
+  .password-match.bad { color: var(--red); }
 
   .submit-btn {
     width: 100%; background: var(--purple); color: var(--white);
@@ -147,7 +150,7 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
   </div>
 
   <div class="form-card">
-    <form action="Update.php" method="post">
+    <form action="Update.php" method="post" onsubmit="return validateProfileForm()">
 
       <div class="form-section">
         <div class="section-label">About You</div>
@@ -233,6 +236,22 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
         </div>
       </div>
 
+      <div class="form-section">
+        <div class="section-label">Change Password</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Leave both blank to keep your current password.</p>
+        <div class="row-2">
+          <div class="field">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" autocomplete="new-password" oninput="checkNewPasswordMatch()">
+          </div>
+          <div class="field">
+            <label for="confirmNewPassword">Confirm New Password</label>
+            <input type="password" id="confirmNewPassword" name="confirmNewPassword" autocomplete="new-password" oninput="checkNewPasswordMatch()">
+          </div>
+        </div>
+        <div class="password-match" id="newPasswordMatchMessage" style="font-size:13px;margin-top:-8px;"></div>
+      </div>
+
       <button type="submit" class="submit-btn">Save Changes ✦</button>
       <a href="dashboard.php" class="cancel-link">Cancel</a>
     </form>
@@ -278,6 +297,40 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
         statusDiv.innerHTML = `<span style="color:#E05555;">✗ Couldn't find that address. Try being more specific.</span>`;
       }
     });
+  }
+
+  // Password change (optional — leave blank to keep current password)
+  function checkNewPasswordMatch() {
+    const pw = document.getElementById('newPassword').value;
+    const cpw = document.getElementById('confirmNewPassword').value;
+    const msg = document.getElementById('newPasswordMatchMessage');
+    if (pw === '' && cpw === '') {
+      msg.textContent = ''; msg.className = 'password-match';
+      return;
+    }
+    if (pw === cpw) {
+      msg.textContent = '✓ Passwords match';
+      msg.className = 'password-match ok';
+    } else {
+      msg.textContent = '✗ Passwords do not match';
+      msg.className = 'password-match bad';
+    }
+  }
+
+  function validateProfileForm() {
+    const pw = document.getElementById('newPassword').value;
+    const cpw = document.getElementById('confirmNewPassword').value;
+    if (pw !== '' || cpw !== '') {
+      if (pw !== cpw) {
+        alert('New password and confirmation do not match.');
+        return false;
+      }
+      if (pw.length < 4) {
+        alert('Please choose a longer password.');
+        return false;
+      }
+    }
+    return true;
   }
 </script>
 </body>

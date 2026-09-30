@@ -50,23 +50,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     $involvementType = $involvementTypes ? implode(", ", $involvementTypes) : 'Talent';
 
-    $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ? WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $updateSql);
-    mysqli_stmt_bind_param(
-        $stmt,
-        "sssssssssddisi",
-        $firstName, $lastName, $phoneNumber, $dob, $message, $roles, $description, $website,
-        $serviceAreaAddress, $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType, $personId
-    );
-
-    if (mysqli_stmt_execute($stmt)) {
-        $statusType = 'success';
-        $status = 'Your profile has been updated successfully.';
-    } else {
-        $statusType = 'error';
-        $status = 'Something went wrong updating your profile. Please try again.';
+    // Password change — optional, leave both fields blank to keep the current one
+    $newPassword = isset($_POST["newPassword"]) ? $_POST["newPassword"] : '';
+    $confirmNewPassword = isset($_POST["confirmNewPassword"]) ? $_POST["confirmNewPassword"] : '';
+    $passwordError = '';
+    $newHashedPassword = null;
+    $newSalt = null;
+    if ($newPassword !== '' || $confirmNewPassword !== '') {
+        if ($newPassword !== $confirmNewPassword) {
+            $passwordError = 'New password and confirmation did not match. Your profile was not updated.';
+        } elseif (strlen($newPassword) < 4) {
+            $passwordError = 'Please choose a longer password. Your profile was not updated.';
+        } else {
+            $newSalt = bin2hex(random_bytes(16));
+            $newHashedPassword = password_hash($newPassword . $newSalt, PASSWORD_DEFAULT);
+        }
     }
-    mysqli_stmt_close($stmt);
+
+    if ($passwordError !== '') {
+        $statusType = 'error';
+        $status = $passwordError;
+    } else {
+        if ($newHashedPassword !== null) {
+            $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ?, password = ?, salt = ? WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $updateSql);
+            mysqli_stmt_bind_param(
+                $stmt,
+                "sssssssssddisssi",
+                $firstName, $lastName, $phoneNumber, $dob, $message, $roles, $description, $website,
+                $serviceAreaAddress, $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType,
+                $newHashedPassword, $newSalt, $personId
+            );
+        } else {
+            $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ? WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $updateSql);
+            mysqli_stmt_bind_param(
+                $stmt,
+                "sssssssssddisi",
+                $firstName, $lastName, $phoneNumber, $dob, $message, $roles, $description, $website,
+                $serviceAreaAddress, $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType, $personId
+            );
+        }
+
+        if (mysqli_stmt_execute($stmt)) {
+            $statusType = 'success';
+            $status = $newHashedPassword !== null
+                ? 'Your profile has been updated and your password has been changed.'
+                : 'Your profile has been updated successfully.';
+        } else {
+            $statusType = 'error';
+            $status = 'Something went wrong updating your profile. Please try again.';
+        }
+        mysqli_stmt_close($stmt);
+    }
 }
 
 mysqli_close($conn);
