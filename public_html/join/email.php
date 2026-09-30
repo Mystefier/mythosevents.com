@@ -7,7 +7,9 @@ $status = '';
 $statusType = '';
 $email = '';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
+if (isset($_GET['noted'])) {
+    $statusType = 'noted';
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
     // Looks like a bot — pretend the confirmation email went out, do nothing.
     $statusType = 'success';
     $status = "We've sent a confirmation link to your email. Check your inbox and click the link to complete your profile.";
@@ -281,7 +283,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
         <h3>What Happens Next</h3>
         <div class="step">
           <div class="step-num">1</div>
-          <span>Open the confirmation email from <strong style="color:var(--lilac)">confirm@mythosevents.com</strong></span>
+          <span>Open the confirmation email from <strong style="color:var(--lilac)">wadehawkins@mythosevents.com</strong></span>
         </div>
         <div class="step">
           <div class="step-num">2</div>
@@ -296,10 +298,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && is_spam_submission($_POST)) {
           <span>We'll be in touch about upcoming events</span>
         </div>
       </div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:28px;">
-        Don't see the email in 10 minutes? Check your spam folder or
-        <a href="mailto:wadehawkins@mythosevents.com" style="color:var(--purple-lt)">email us directly</a>.
-      </p>
+
+      <div class="status-card" style="text-align:left;margin-top:8px;">
+        <p style="margin-bottom:12px;">Don't see the email in 10 minutes? Check your spam folder, or just let us know below — your email's already saved, so we'll follow up with you directly.</p>
+        <form action="send-note.php" method="post">
+          <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
+          <label for="noteMessage" style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--purple-lt);margin-bottom:8px;">DIDN'T GET THE EMAIL? TELL US HERE (OPTIONAL)</label>
+          <textarea id="noteMessage" name="noteMessage" rows="3" placeholder="e.g. Still nothing in my inbox or spam after 10 minutes" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--purple-dim);border-radius:8px;padding:12px 14px;font-size:14px;font-family:'Inter',sans-serif;color:var(--white);outline:none;resize:vertical;margin-bottom:12px;box-sizing:border-box;"></textarea>
+          <?php echo spam_honeypot_field(); ?>
+          <button type="submit" class="btn-back" style="border:none;cursor:pointer;width:100%;">Send Us a Note ✦</button>
+        </form>
+      </div>
+
+      <a href="/" class="btn-back" style="margin-top:16px;display:inline-block;">Back to Mythos Events</a>
+
+    <?php elseif ($statusType === 'noted'): ?>
+      <div class="status-icon">✅</div>
+      <h1>Got It</h1>
+      <div class="status-card success">
+        <p>Thanks — we've got your note and your email is saved. We'll follow up with you directly.</p>
+      </div>
       <a href="/" class="btn-back">Back to Mythos Events</a>
 
     <?php elseif ($statusType === 'warning'): ?>
