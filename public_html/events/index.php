@@ -4,7 +4,7 @@ include(__DIR__ . '/../join/logintodatabase.php');
 // Get approved events, sorted by start_date
 $eventsStmt = $conn->prepare("
     SELECT e.id, e.title, e.description, e.event_type, e.start_date, e.start_time, e.end_date, e.end_time,
-           e.location, e.website, e.contact_email, p.first, p.last
+           e.location, e.website, e.peatix_url, e.contact_email, p.first, p.last
     FROM events e
     JOIN people p ON e.organizer_id = p.id
     WHERE e.status = 'approved'
@@ -162,6 +162,9 @@ $eventsStmt->close();
               <div class="event-links">
                 <?php if ($event['website']): ?>
                   <a href="<?php echo htmlspecialchars($event['website']); ?>" target="_blank" class="event-link event-link-primary">TICKETS</a>
+                <?php endif; ?>
+                <?php if ($event['peatix_url']): ?>
+                  <a href="<?php echo htmlspecialchars($event['peatix_url']); ?>" target="_blank" class="event-link event-link-primary">🇲🇾 TICKETS (PEATIX)</a>
                 <?php endif; ?>
                 <?php if ($event['contact_email']): ?>
                   <a href="mailto:<?php echo htmlspecialchars($event['contact_email']); ?>" class="event-link event-link-secondary">CONTACT</a>

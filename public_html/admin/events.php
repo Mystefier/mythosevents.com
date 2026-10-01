@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $event_id) {
 // Get pending events
 $pendingStmt = $conn->prepare("
     SELECT e.id, e.title, e.description, e.event_type, e.start_date, e.start_time, e.location,
-           e.website, e.contact_email, e.created_at, p.first, p.last, p.email
+           e.website, e.peatix_url, e.contact_email, e.created_at, p.first, p.last, p.email
     FROM events e
     JOIN people p ON e.organizer_id = p.id
     WHERE e.status = 'pending_approval'
@@ -270,6 +270,9 @@ $rejectedStmt->close();
             <?php endif; ?>
             <?php if ($event['website']): ?>
               | <a href="<?php echo htmlspecialchars($event['website']); ?>" target="_blank" style="color: var(--purple-lt); text-decoration: none;">Ticketing</a>
+            <?php endif; ?>
+            <?php if ($event['peatix_url']): ?>
+              | <a href="<?php echo htmlspecialchars($event['peatix_url']); ?>" target="_blank" style="color: var(--purple-lt); text-decoration: none;">🇲🇾 Peatix</a>
             <?php endif; ?>
           </div>
 

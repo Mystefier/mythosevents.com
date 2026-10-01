@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $end_time = trim($_POST['end_time'] ?? '');
     $location = trim($_POST['location'] ?? '');
     $website = trim($_POST['website'] ?? '');
+    $peatix_url = trim($_POST['peatix_url'] ?? '');
     $contact_email = trim($_POST['contact_email'] ?? '');
 
     // Validation
@@ -45,12 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Insert event
         $insertStmt = $conn->prepare(
-            "INSERT INTO events (organizer_id, title, description, event_type, start_date, start_time, end_date, end_time, location, website, contact_email, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_approval')"
+            "INSERT INTO events (organizer_id, title, description, event_type, start_date, start_time, end_date, end_time, location, website, peatix_url, contact_email, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_approval')"
         );
         $insertStmt->bind_param(
-            "isssssssss",
-            $user_id, $title, $description, $event_type, $start_date, $start_time, $end_date, $end_time, $location, $website, $contact_email
+            "issssssssss",
+            $user_id, $title, $description, $event_type, $start_date, $start_time, $end_date, $end_time, $location, $website, $peatix_url, $contact_email
         );
         if ($insertStmt->execute()) {
             $success = 'Event submitted for approval! We\'ll review it and get back to you shortly.';
@@ -72,6 +73,7 @@ $end_date_val = htmlspecialchars($_POST['end_date'] ?? '');
 $end_time_val = htmlspecialchars($_POST['end_time'] ?? '');
 $location_val = htmlspecialchars($_POST['location'] ?? '');
 $website_val = htmlspecialchars($_POST['website'] ?? '');
+$peatix_url_val = htmlspecialchars($_POST['peatix_url'] ?? '');
 $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
 ?>
 <!DOCTYPE html>
@@ -230,6 +232,11 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
     <div class="field">
       <label>WEBSITE / TICKETING</label>
       <input type="url" name="website" placeholder="https://..." value="<?php echo $website_val; ?>">
+    </div>
+
+    <div class="field">
+      <label>PEATIX LINK <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.7;">(optional — if you're also selling tickets there, e.g. for Malaysia-friendly payment options)</span></label>
+      <input type="url" name="peatix_url" placeholder="https://peatix.com/event/..." value="<?php echo $peatix_url_val; ?>">
     </div>
 
     <div class="field">
