@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_approval')"
         );
         $insertStmt->bind_param(
-            "issssssssss",
+            "isssssssssss",
             $user_id, $title, $description, $event_type, $start_date, $start_time, $end_date, $end_time, $location, $website, $peatix_url, $contact_email
         );
         if ($insertStmt->execute()) {
