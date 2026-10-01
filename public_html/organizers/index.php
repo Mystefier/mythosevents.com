@@ -4,9 +4,9 @@ $logged_in = false;
 $is_approved = false;
 $user_name = '';
 
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['person_id'])) {
     include(__DIR__ . '/../join/logintodatabase.php');
-    $user_id = (int)$_SESSION['user_id'];
+    $user_id = (int)$_SESSION['person_id'];
     $userStmt = $conn->prepare("SELECT first, application_status FROM people WHERE id = ?");
     $userStmt->bind_param("i", $user_id);
     $userStmt->execute();

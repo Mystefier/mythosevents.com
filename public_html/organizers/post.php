@@ -3,12 +3,12 @@ session_start();
 include(__DIR__ . '/../join/logintodatabase.php');
 
 // Check if logged in
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['person_id'])) {
     header('Location: /join/?next=' . urlencode('/organizers/post.php'));
     exit;
 }
 
-$user_id = (int)$_SESSION['user_id'];
+$user_id = (int)$_SESSION['person_id'];
 
 // Check if organizer with approved status
 $userStmt = $conn->prepare("SELECT id, first, email, application_status FROM people WHERE id = ?");

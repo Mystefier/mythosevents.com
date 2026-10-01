@@ -3,12 +3,12 @@ session_start();
 include(__DIR__ . '/../join/logintodatabase.php');
 
 // Check if logged in as admin
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['person_id'])) {
     header('Location: /join/?next=' . urlencode('/admin/events.php'));
     exit;
 }
 
-$user_id = (int)$_SESSION['user_id'];
+$user_id = (int)$_SESSION['person_id'];
 $userStmt = $conn->prepare("SELECT id, first, email FROM people WHERE id = ? AND email LIKE '%@mythosevents.com'");
 $userStmt->bind_param("i", $user_id);
 $userStmt->execute();
