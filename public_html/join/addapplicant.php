@@ -6,10 +6,15 @@ $email = isset($_GET["email"]) ? filter_var($_GET["email"], FILTER_SANITIZE_EMAI
 $recruiterId = isset($_GET['id']) && $_GET['id'] !== '' ? $_GET['id'] : '1';
 $source = isset($_GET['source']) ? preg_replace('/[^a-z0-9_-]/', '', strtolower($_GET['source'])) : '';
 
+// Email confirmation is bypassed for now (see spamcheck/email deliverability
+// notes) -- this form works as a direct standalone signup, with email as a
+// real field below. A GET email (old-style confirmation links, still
+// supported) just pre-fills it; only validate/check it here when present,
+// since there's nothing to check yet if someone lands with no params at all.
 $errorState = '';
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errorState = 'invalid';
-} else {
+} elseif ($email !== '') {
     // Only a row that already has a password means someone actually finished
     // registering. A passwordless row (Started Joining capture, a subscriber
     // stub, etc.) is exactly what should be free to complete this step --
@@ -289,12 +294,16 @@ mysqli_close($conn);
         </div>
       </div>
       <?php endif; ?>
-      <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
       <input type="hidden" name="recruiter" value="<?php echo htmlspecialchars($recruiterId); ?>">
 
       <!-- NAME & CONTACT -->
       <div class="form-section">
         <div class="section-label">About You</div>
+
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($email); ?>" required>
+        </div>
 
         <div class="field-row">
           <div class="field">

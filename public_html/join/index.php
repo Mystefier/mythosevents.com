@@ -1,7 +1,16 @@
 <?php
-$id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : null;
-require_once(__DIR__ . '/spamcheck.php');
-?>
+// Email confirmation bypassed for now (see spamcheck/deliverability notes) --
+// skip straight to the full signup form instead of the email-first gate.
+// Easy to revert: just remove this redirect once the email service is live.
+$params = [];
+if (isset($_GET['id']) && $_GET['id'] !== '') {
+    $params['id'] = $_GET['id'];
+}
+if (isset($_GET['source']) && $_GET['source'] !== '') {
+    $params['source'] = $_GET['source'];
+}
+header('Location: addapplicant.php' . ($params ? '?' . http_build_query($params) : ''));
+exit();
 <!DOCTYPE html>
 <html lang="en">
 <head>

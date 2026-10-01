@@ -79,6 +79,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $existingRow = mysqli_fetch_assoc($existingResult);
         mysqli_stmt_close($checkStmt);
 
+        // Now that this form works as a direct standalone signup (email
+        // confirmation bypassed for now), it can no longer rely on
+        // addapplicant.php having pre-checked this -- guard it here instead.
+        if ($existingRow && !empty($existingRow['password'])) {
+            mysqli_close($conn);
+            $statusType = 'error';
+            $statusMessage = 'This email address is already registered. Please log in instead.';
+            goto renderError;
+        }
+
         if ($existingRow && empty($existingRow['password'])) {
             $recentlyAddedId = intval($existingRow['id']);
             $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, roles = ?, description = ?, website = ?, recruiter = ?, dob = ?, password = ?, salt = ?, message = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ? WHERE id = ?";
@@ -241,6 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     mysqli_close($conn);
+    renderError: ;
 } else {
     // Redirect to the main page if accessed directly without form submission
     header("Location: index.php");
