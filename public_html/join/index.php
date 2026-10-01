@@ -11,6 +11,7 @@ if (isset($_GET['source']) && $_GET['source'] !== '') {
 }
 header('Location: addapplicant.php' . ($params ? '?' . http_build_query($params) : ''));
 exit();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
