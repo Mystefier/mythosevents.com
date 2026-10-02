@@ -30,6 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['application_action'])
         mysqli_stmt_bind_param($updStmt, "si", $newStatus, $targetId);
         mysqli_stmt_execute($updStmt);
         mysqli_stmt_close($updStmt);
+
+        if ($newStatus === 'approved') {
+            require_once(__DIR__ . '/send-approved-email.php');
+            $emailStmt = mysqli_prepare($conn, "SELECT email, first FROM people WHERE id = ?");
+            mysqli_stmt_bind_param($emailStmt, "i", $targetId);
+            mysqli_stmt_execute($emailStmt);
+            $target = mysqli_stmt_get_result($emailStmt)->fetch_assoc();
+            mysqli_stmt_close($emailStmt);
+            if ($target && $target['email']) {
+                send_approval_email($target['email'], $target['first']);
+            }
+        }
     }
     header("Location: admin.php" . (isset($_GET['filter']) ? '?filter=' . urlencode($_GET['filter']) : ''));
     exit();
