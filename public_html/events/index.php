@@ -1,14 +1,16 @@
 <?php
 include(__DIR__ . '/../join/logintodatabase.php');
 
-// Get approved events, sorted by start_date
+// Each scheduled occurrence of an approved event gets its own card, soonest first.
 $eventsStmt = $conn->prepare("
-    SELECT e.id, e.title, e.description, e.event_type, e.start_date, e.start_time, e.end_date, e.end_time,
-           e.location, e.website, e.peatix_url, e.contact_email, p.first, p.last
-    FROM events e
+    SELECT o.id AS occurrence_id, o.start_date, o.start_time, o.end_date, o.end_time,
+           o.location, o.directions, o.website, o.peatix_url,
+           e.title, e.description, e.event_type, e.cover_image_url, e.contact_email, p.first, p.last
+    FROM event_occurrences o
+    JOIN events e ON o.event_id = e.id
     JOIN people p ON e.organizer_id = p.id
-    WHERE e.status = 'approved'
-    ORDER BY e.start_date ASC
+    WHERE e.status = 'approved' AND o.status = 'scheduled' AND o.start_date >= CURDATE()
+    ORDER BY o.start_date ASC
 ");
 $eventsStmt->execute();
 $eventsResult = $eventsStmt->get_result();
@@ -82,11 +84,13 @@ $eventsStmt->close();
   }
   .event-card:hover { transform: translateY(-4px); border-color: var(--purple-lt); }
 
+  .event-cover { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 16px; }
   .event-type { font-family: 'Cinzel Decorative', serif; font-size: 9px; letter-spacing: 0.3em; color: var(--gold); margin-bottom: 8px; }
   .event-title { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
   .event-date { font-size: 14px; color: var(--purple-lt); margin-bottom: 8px; }
   .event-location { font-size: 14px; color: var(--muted); margin-bottom: 12px; }
   .event-description { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+  .event-directions { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
   .event-organizer { font-size: 13px; color: var(--muted); font-style: italic; margin-bottom: 16px; }
 
   .event-links { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -147,6 +151,9 @@ $eventsStmt->close();
             }
             ?>
             <div class="event-card">
+              <?php if ($event['cover_image_url']): ?>
+                <img src="<?php echo htmlspecialchars($event['cover_image_url']); ?>" alt="" class="event-cover">
+              <?php endif; ?>
               <?php if ($event['event_type']): ?>
                 <div class="event-type"><?php echo htmlspecialchars($event['event_type']); ?></div>
               <?php endif; ?>
@@ -157,6 +164,9 @@ $eventsStmt->close();
               <?php endif; ?>
               <?php if ($event['description']): ?>
                 <div class="event-description"><?php echo htmlspecialchars(substr($event['description'], 0, 150)); ?><?php echo strlen($event['description']) > 150 ? '…' : ''; ?></div>
+              <?php endif; ?>
+              <?php if ($event['directions']): ?>
+                <div class="event-directions">🧭 <?php echo htmlspecialchars($event['directions']); ?></div>
               <?php endif; ?>
               <div class="event-organizer">By <?php echo htmlspecialchars($event['first'] . ' ' . $event['last']); ?></div>
               <div class="event-links">

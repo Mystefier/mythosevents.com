@@ -48,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $event_id) {
 
 // Get pending events
 $pendingStmt = $conn->prepare("
-    SELECT e.id, e.title, e.description, e.event_type, e.start_date, e.start_time, e.location,
-           e.website, e.peatix_url, e.contact_email, e.created_at, p.first, p.last, p.email
+    SELECT e.id, e.title, e.description, e.event_type, e.cover_image_url,
+           e.contact_email, e.created_at, p.first, p.last, p.email
     FROM events e
     JOIN people p ON e.organizer_id = p.id
     WHERE e.status = 'pending_approval'
@@ -62,12 +62,12 @@ $pendingStmt->close();
 
 // Get approved events
 $approvedStmt = $conn->prepare("
-    SELECT e.id, e.title, e.event_type, e.start_date, e.start_time, e.location,
-           p.first, p.last, e.updated_at
+    SELECT e.id, e.title, e.event_type, e.cover_image_url, p.first, p.last, e.updated_at,
+           (SELECT COUNT(*) FROM event_occurrences o WHERE o.event_id = e.id) AS occurrence_count
     FROM events e
     JOIN people p ON e.organizer_id = p.id
     WHERE e.status = 'approved'
-    ORDER BY e.start_date ASC
+    ORDER BY e.updated_at DESC
 ");
 $approvedStmt->execute();
 $approvedResult = $approvedStmt->get_result();
@@ -76,7 +76,7 @@ $approvedStmt->close();
 
 // Get rejected events
 $rejectedStmt = $conn->prepare("
-    SELECT e.id, e.title, e.event_type, e.start_date, e.rejection_reason,
+    SELECT e.id, e.title, e.event_type, e.rejection_reason,
            p.first, p.last, e.updated_at
     FROM events e
     JOIN people p ON e.organizer_id = p.id
@@ -244,20 +244,9 @@ $rejectedStmt->close();
             </div>
           </div>
 
-          <div class="event-meta">
-            <div class="meta-item">
-              <div class="meta-label">DATE</div>
-              <?php
-              $start = new DateTime($event['start_date']);
-              echo $start->format('M j, Y');
-              if ($event['start_time']) echo ' ' . date('g:ia', strtotime($event['start_time']));
-              ?>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">LOCATION</div>
-              <?php echo htmlspecialchars($event['location'] ?? 'Not specified'); ?>
-            </div>
-          </div>
+          <?php if ($event['cover_image_url']): ?>
+            <img src="<?php echo htmlspecialchars($event['cover_image_url']); ?>" alt="" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:16px;">
+          <?php endif; ?>
 
           <?php if ($event['description']): ?>
             <div class="event-description"><?php echo htmlspecialchars(substr($event['description'], 0, 300)); ?><?php echo strlen($event['description']) > 300 ? '…' : ''; ?></div>
@@ -268,13 +257,8 @@ $rejectedStmt->close();
             <?php if ($event['contact_email']): ?>
               | Contact: <?php echo htmlspecialchars($event['contact_email']); ?>
             <?php endif; ?>
-            <?php if ($event['website']): ?>
-              | <a href="<?php echo htmlspecialchars($event['website']); ?>" target="_blank" style="color: var(--purple-lt); text-decoration: none;">Ticketing</a>
-            <?php endif; ?>
-            <?php if ($event['peatix_url']): ?>
-              | <a href="<?php echo htmlspecialchars($event['peatix_url']); ?>" target="_blank" style="color: var(--purple-lt); text-decoration: none;">🇲🇾 Peatix</a>
-            <?php endif; ?>
           </div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 8px;">This approves the event concept only — the organizer schedules specific dates afterward, and those go live without separate approval.</div>
 
           <div class="event-actions">
             <button class="btn btn-approve" onclick="approveEvent(<?php echo $event['id']; ?>)">✓ APPROVE</button>
@@ -306,21 +290,13 @@ $rejectedStmt->close();
 
           <div class="event-meta">
             <div class="meta-item">
-              <div class="meta-label">DATE</div>
-              <?php
-              $start = new DateTime($event['start_date']);
-              echo $start->format('M j, Y');
-              if ($event['start_time']) echo ' ' . date('g:ia', strtotime($event['start_time']));
-              ?>
-            </div>
-            <div class="meta-item">
               <div class="meta-label">ORGANIZER</div>
               <?php echo htmlspecialchars($event['first'] . ' ' . $event['last']); ?>
             </div>
-          </div>
-
-          <div class="event-organizer">
-            Location: <?php echo htmlspecialchars($event['location'] ?? 'Not specified'); ?>
+            <div class="meta-item">
+              <div class="meta-label">DATES SCHEDULED</div>
+              <?php echo (int)$event['occurrence_count']; ?>
+            </div>
           </div>
         </div>
       <?php endforeach; ?>
@@ -347,14 +323,6 @@ $rejectedStmt->close();
           </div>
 
           <div class="event-meta">
-            <div class="meta-item">
-              <div class="meta-label">DATE</div>
-              <?php
-              $start = new DateTime($event['start_date']);
-              echo $start->format('M j, Y');
-              if ($event['start_time']) echo ' ' . date('g:ia', strtotime($event['start_time']));
-              ?>
-            </div>
             <div class="meta-item">
               <div class="meta-label">ORGANIZER</div>
               <?php echo htmlspecialchars($event['first'] . ' ' . $event['last']); ?>

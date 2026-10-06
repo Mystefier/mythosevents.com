@@ -4,6 +4,8 @@ $logged_in = false;
 $is_approved = false;
 $user_name = '';
 
+$my_events = [];
+
 if (isset($_SESSION['person_id'])) {
     include(__DIR__ . '/../join/logintodatabase.php');
     $user_id = (int)$_SESSION['person_id'];
@@ -16,6 +18,19 @@ if (isset($_SESSION['person_id'])) {
         $logged_in = true;
         $user_name = $user['first'];
         $is_approved = ($user['application_status'] === 'approved');
+    }
+    if ($is_approved) {
+        $eventsStmt = $conn->prepare("
+            SELECT e.id, e.title, e.event_type, e.status,
+                   (SELECT COUNT(*) FROM event_occurrences o WHERE o.event_id = e.id) AS occurrence_count
+            FROM events e
+            WHERE e.organizer_id = ?
+            ORDER BY e.created_at DESC
+        ");
+        $eventsStmt->bind_param("i", $user_id);
+        $eventsStmt->execute();
+        $my_events = $eventsStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $eventsStmt->close();
     }
     $conn->close();
 }
@@ -101,6 +116,25 @@ if (isset($_SESSION['person_id'])) {
   .btn-secondary:hover { background: #f0d960; transform: translateY(-2px); }
   .dashboard-note { color: var(--muted); font-size: 14px; margin-top: 8px; }
 
+  .my-events-list { margin-top: 10px; }
+  .my-event-row {
+    background: var(--card); border: 1px solid var(--purple-dim);
+    border-radius: 10px; padding: 16px 22px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .my-event-title { font-family: 'Cinzel', serif; font-size: 15px; color: var(--white); margin-bottom: 4px; }
+  .my-event-meta { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+  .status-badge { font-size: 11px; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; }
+  .status-pending_approval { background: rgba(232,197,71,0.15); color: var(--gold); }
+  .status-approved { background: rgba(34,197,94,0.15); color: #86efac; }
+  .status-rejected { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  .my-event-action {
+    background: var(--purple); color: var(--white); text-decoration: none;
+    font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.08em;
+    padding: 10px 18px; border-radius: 6px; white-space: nowrap;
+  }
+  .my-event-action:hover { background: var(--purple-lt); }
+
   /* VALUE PROPS */
   .value-section { padding: 40px 20px 70px; }
   .value-wrap { max-width: 960px; margin: 0 auto; }
@@ -183,8 +217,29 @@ if (isset($_SESSION['person_id'])) {
             <h2>Welcome back, <?php echo htmlspecialchars($user_name); ?>! ✦</h2>
             <p class="dashboard-note">You're approved to post events to the network.</p>
           </div>
-          <a href="/organizers/post.php" class="btn-secondary">POST AN EVENT</a>
+          <a href="/organizers/post.php" class="btn-secondary">CREATE EVENT</a>
         </div>
+
+        <?php if (count($my_events) > 0): ?>
+          <div class="my-events-list">
+            <?php foreach ($my_events as $ev): ?>
+              <div class="my-event-row">
+                <div class="my-event-info">
+                  <div class="my-event-title"><?php echo htmlspecialchars($ev['title']); ?></div>
+                  <div class="my-event-meta">
+                    <span class="status-badge status-<?php echo htmlspecialchars($ev['status']); ?>"><?php echo htmlspecialchars(str_replace('_', ' ', $ev['status'])); ?></span>
+                    <?php if ($ev['status'] === 'approved'): ?>
+                      <span>· <?php echo (int)$ev['occurrence_count']; ?> date<?php echo $ev['occurrence_count'] == 1 ? '' : 's'; ?> scheduled</span>
+                    <?php endif; ?>
+                  </div>
+                </div>
+                <?php if ($ev['status'] === 'approved'): ?>
+                  <a href="/organizers/schedule.php?event_id=<?php echo (int)$ev['id']; ?>" class="my-event-action">SCHEDULE A DATE</a>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
   <?php endif; ?>
@@ -267,7 +322,7 @@ if (isset($_SESSION['person_id'])) {
       <?php if (!$logged_in || !$is_approved): ?>
         <a href="/join/" class="btn-primary">Become an Organizer ✦</a>
       <?php else: ?>
-        <a href="/organizers/post.php" class="btn-primary">Post Your First Event ✦</a>
+        <a href="/organizers/post.php" class="btn-primary">Create Your First Event ✦</a>
       <?php endif; ?>
     </div>
   </div>

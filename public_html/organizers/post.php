@@ -29,32 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $event_type = trim($_POST['event_type'] ?? '');
-    $start_date = trim($_POST['start_date'] ?? '');
-    $start_time = trim($_POST['start_time'] ?? '');
-    $end_date = trim($_POST['end_date'] ?? '');
-    $end_time = trim($_POST['end_time'] ?? '');
-    $location = trim($_POST['location'] ?? '');
-    $website = trim($_POST['website'] ?? '');
-    $peatix_url = trim($_POST['peatix_url'] ?? '');
+    $cover_image_url = trim($_POST['cover_image_url'] ?? '');
     $contact_email = trim($_POST['contact_email'] ?? '');
 
     // Validation
     if (!$title) {
         $error = 'Event title is required.';
-    } elseif (!$start_date) {
-        $error = 'Start date is required.';
     } else {
         // Insert event
         $insertStmt = $conn->prepare(
-            "INSERT INTO events (organizer_id, title, description, event_type, start_date, start_time, end_date, end_time, location, website, peatix_url, contact_email, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_approval')"
+            "INSERT INTO events (organizer_id, title, description, cover_image_url, event_type, contact_email, status)
+             VALUES (?, ?, ?, ?, ?, ?, 'pending_approval')"
         );
         $insertStmt->bind_param(
-            "isssssssssss",
-            $user_id, $title, $description, $event_type, $start_date, $start_time, $end_date, $end_time, $location, $website, $peatix_url, $contact_email
+            "isssss",
+            $user_id, $title, $description, $cover_image_url, $event_type, $contact_email
         );
         if ($insertStmt->execute()) {
-            $success = 'Event submitted for approval! We\'ll review it and get back to you shortly.';
+            $success = 'Event submitted for approval! Once it\'s approved, you can schedule it — pick a date, place, and directions from your dashboard.';
             // Clear form
             $_POST = [];
         } else {
@@ -67,13 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $title_val = htmlspecialchars($_POST['title'] ?? '');
 $description_val = htmlspecialchars($_POST['description'] ?? '');
 $event_type_val = htmlspecialchars($_POST['event_type'] ?? '');
-$start_date_val = htmlspecialchars($_POST['start_date'] ?? '');
-$start_time_val = htmlspecialchars($_POST['start_time'] ?? '');
-$end_date_val = htmlspecialchars($_POST['end_date'] ?? '');
-$end_time_val = htmlspecialchars($_POST['end_time'] ?? '');
-$location_val = htmlspecialchars($_POST['location'] ?? '');
-$website_val = htmlspecialchars($_POST['website'] ?? '');
-$peatix_url_val = htmlspecialchars($_POST['peatix_url'] ?? '');
+$cover_image_url_val = htmlspecialchars($_POST['cover_image_url'] ?? '');
 $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
 ?>
 <!DOCTYPE html>
@@ -81,7 +67,7 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Post an Event — Mythos Events</title>
+<title>Create an Event — Mythos Events</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Cinzel+Decorative:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -136,8 +122,6 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
   }
   input[type="text"],
   input[type="email"],
-  input[type="date"],
-  input[type="time"],
   input[type="url"],
   textarea {
     width: 100%; background: rgba(255,255,255,0.05);
@@ -151,9 +135,6 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
   }
   input::placeholder, textarea::placeholder { color: var(--muted); }
   textarea { resize: vertical; min-height: 120px; }
-
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
 
   .submit-btn {
     width: 100%; background: var(--purple); color: var(--white);
@@ -176,8 +157,8 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
 </nav>
 
 <main>
-  <h1>Post an Event</h1>
-  <p>Share your event with the Mythos Events network. Events are reviewed before going live.</p>
+  <h1>Create an Event</h1>
+  <p>This is the concept — the title, description, and look of your event. Once it's approved, you'll schedule one or more dates for it with the time, place, and directions.</p>
 
   <?php if ($error): ?>
     <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
@@ -202,41 +183,9 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
       <input type="text" name="event_type" placeholder="e.g., Festival, Pop-up, Theater, Workshop" value="<?php echo $event_type_val; ?>">
     </div>
 
-    <div class="row">
-      <div class="field">
-        <label>START DATE *</label>
-        <input type="date" name="start_date" value="<?php echo $start_date_val; ?>" required>
-      </div>
-      <div class="field">
-        <label>START TIME</label>
-        <input type="time" name="start_time" value="<?php echo $start_time_val; ?>">
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="field">
-        <label>END DATE</label>
-        <input type="date" name="end_date" value="<?php echo $end_date_val; ?>">
-      </div>
-      <div class="field">
-        <label>END TIME</label>
-        <input type="time" name="end_time" value="<?php echo $end_time_val; ?>">
-      </div>
-    </div>
-
     <div class="field">
-      <label>LOCATION</label>
-      <input type="text" name="location" placeholder="City, venue, or area" value="<?php echo $location_val; ?>">
-    </div>
-
-    <div class="field">
-      <label>WEBSITE / TICKETING</label>
-      <input type="url" name="website" placeholder="https://..." value="<?php echo $website_val; ?>">
-    </div>
-
-    <div class="field">
-      <label>PEATIX LINK <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.7;">(optional — if you're also selling tickets there, e.g. for Malaysia-friendly payment options)</span></label>
-      <input type="url" name="peatix_url" placeholder="https://peatix.com/event/..." value="<?php echo $peatix_url_val; ?>">
+      <label>COVER IMAGE URL <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.7;">(optional — a link to an image hosted elsewhere)</span></label>
+      <input type="url" name="cover_image_url" placeholder="https://..." value="<?php echo $cover_image_url_val; ?>">
     </div>
 
     <div class="field">
@@ -245,7 +194,7 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
     </div>
 
     <button type="submit" class="submit-btn">SUBMIT FOR APPROVAL ✦</button>
-    <p class="form-note">Events are reviewed and published within 24 hours.</p>
+    <p class="form-note">Events are reviewed within 24 hours. Dates and locations come next, once approved.</p>
   </form>
 </main>
 
