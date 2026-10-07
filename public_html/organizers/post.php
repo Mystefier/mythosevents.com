@@ -35,7 +35,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validation
     if (!$title) {
         $error = 'Event title is required.';
-    } else {
+    }
+
+    // An uploaded file takes priority over a pasted URL
+    if (!$error && isset($_FILES['cover_image']) && $_FILES['cover_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $file = $_FILES['cover_image'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $error = 'There was a problem uploading that image. Please try again.';
+        } elseif ($file['size'] > 5 * 1024 * 1024) {
+            $error = 'Image must be smaller than 5MB.';
+        } else {
+            $imageInfo = @getimagesize($file['tmp_name']);
+            $allowedTypes = [
+                IMAGETYPE_JPEG => 'jpg',
+                IMAGETYPE_PNG  => 'png',
+                IMAGETYPE_GIF  => 'gif',
+                IMAGETYPE_WEBP => 'webp',
+            ];
+            if (!$imageInfo || !isset($allowedTypes[$imageInfo[2]])) {
+                $error = 'That file isn\'t a valid image. Please use a JPG, PNG, GIF, or WEBP.';
+            } else {
+                $destDir = __DIR__ . '/../uploads/events/';
+                if (!is_dir($destDir)) {
+                    mkdir($destDir, 0755, true);
+                }
+                $filename = 'event_' . bin2hex(random_bytes(8)) . '.' . $allowedTypes[$imageInfo[2]];
+                if (move_uploaded_file($file['tmp_name'], $destDir . $filename)) {
+                    $cover_image_url = '/uploads/events/' . $filename;
+                } else {
+                    $error = 'Could not save the uploaded image. Please try again.';
+                }
+            }
+        }
+    }
+
+    if (!$error) {
         // Insert event
         $insertStmt = $conn->prepare(
             "INSERT INTO events (organizer_id, title, description, cover_image_url, event_type, contact_email, status)
@@ -123,6 +157,7 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
   input[type="text"],
   input[type="email"],
   input[type="url"],
+  input[type="file"],
   textarea {
     width: 100%; background: rgba(255,255,255,0.05);
     border: 1px solid var(--purple-dim); border-radius: 8px;
@@ -135,6 +170,11 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
   }
   input::placeholder, textarea::placeholder { color: var(--muted); }
   textarea { resize: vertical; min-height: 120px; }
+  input[type="file"]::-webkit-file-upload-button {
+    background: var(--purple); color: var(--white); border: none;
+    border-radius: 6px; padding: 8px 14px; margin-right: 12px;
+    font-family: 'Inter', sans-serif; cursor: pointer;
+  }
 
   .submit-btn {
     width: 100%; background: var(--purple); color: var(--white);
@@ -167,7 +207,7 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
     <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
   <?php endif; ?>
 
-  <form method="post" class="form-card">
+  <form method="post" class="form-card" enctype="multipart/form-data">
     <div class="field">
       <label>EVENT TITLE *</label>
       <input type="text" name="title" placeholder="e.g., Moonlit Masquerade Ball" value="<?php echo $title_val; ?>" required>
@@ -184,7 +224,12 @@ $contact_email_val = htmlspecialchars($_POST['contact_email'] ?? '');
     </div>
 
     <div class="field">
-      <label>COVER IMAGE URL <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.7;">(optional — a link to an image hosted elsewhere)</span></label>
+      <label>COVER IMAGE <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.7;">(optional — JPG, PNG, GIF, or WEBP, up to 5MB)</span></label>
+      <input type="file" name="cover_image" accept="image/jpeg,image/png,image/gif,image/webp">
+    </div>
+
+    <div class="field">
+      <label>OR COVER IMAGE URL <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.7;">(a link to an image hosted elsewhere — used only if you don't upload one)</span></label>
       <input type="url" name="cover_image_url" placeholder="https://..." value="<?php echo $cover_image_url_val; ?>">
     </div>
 

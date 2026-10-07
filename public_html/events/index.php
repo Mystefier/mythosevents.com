@@ -1,8 +1,10 @@
 <?php
 include(__DIR__ . '/../join/logintodatabase.php');
 
+$search = trim($_GET['q'] ?? '');
+
 // Each scheduled occurrence of an approved event gets its own card, soonest first.
-$eventsStmt = $conn->prepare("
+$sql = "
     SELECT o.id AS occurrence_id, o.start_date, o.start_time, o.end_date, o.end_time,
            o.location, o.directions, o.website, o.peatix_url,
            e.title, e.description, e.event_type, e.cover_image_url, e.contact_email, p.first, p.last
@@ -10,8 +12,17 @@ $eventsStmt = $conn->prepare("
     JOIN events e ON o.event_id = e.id
     JOIN people p ON e.organizer_id = p.id
     WHERE e.status = 'approved' AND o.status = 'scheduled' AND o.start_date >= CURDATE()
-    ORDER BY o.start_date ASC
-");
+";
+if ($search !== '') {
+    $sql .= " AND (e.title LIKE ? OR e.description LIKE ? OR e.event_type LIKE ? OR o.location LIKE ?)";
+}
+$sql .= " ORDER BY o.start_date ASC";
+
+$eventsStmt = $conn->prepare($sql);
+if ($search !== '') {
+    $like = '%' . $search . '%';
+    $eventsStmt->bind_param("ssss", $like, $like, $like, $like);
+}
 $eventsStmt->execute();
 $eventsResult = $eventsStmt->get_result();
 $events = $eventsResult->fetch_all(MYSQLI_ASSOC);
@@ -73,6 +84,24 @@ $eventsStmt->close();
   }
   .hero p { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto; }
 
+  .search-form { margin-top: 28px; display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; }
+  .search-form input[type="text"] {
+    width: 320px; max-width: 100%; background: var(--card); border: 1px solid var(--purple-dim);
+    border-radius: 8px; padding: 12px 16px; font-size: 15px; font-family: 'Inter', sans-serif;
+    color: var(--white); outline: none; transition: border-color 0.2s;
+  }
+  .search-form input[type="text"]:focus { border-color: var(--purple-lt); }
+  .search-form input[type="text"]::placeholder { color: var(--muted); }
+  .search-form button {
+    background: var(--purple); color: var(--white); border: none; border-radius: 8px;
+    padding: 12px 22px; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.1em;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .search-form button:hover { background: var(--purple-lt); }
+  .search-clear { font-size: 13px; color: var(--muted); text-decoration: none; }
+  .search-clear:hover { color: var(--white); }
+  .search-result-note { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
   .events-section { padding: 40px 20px 70px; }
   .events-wrap { max-width: 960px; margin: 0 auto; }
 
@@ -130,10 +159,20 @@ $eventsStmt->close();
     <div class="eyebrow">UPCOMING ADVENTURES</div>
     <h1>Events</h1>
     <p>Discover immersive experiences from Mythos Events organizers in your network.</p>
+    <form method="get" class="search-form">
+      <input type="text" name="q" placeholder="Search by title, type, or location..." value="<?php echo htmlspecialchars($search); ?>">
+      <button type="submit">SEARCH</button>
+      <?php if ($search !== ''): ?>
+        <a href="/events/" class="search-clear">Clear</a>
+      <?php endif; ?>
+    </form>
   </div>
 
   <div class="events-section">
     <div class="events-wrap">
+      <?php if ($search !== ''): ?>
+        <p class="search-result-note"><?php echo count($events); ?> result<?php echo count($events) === 1 ? '' : 's'; ?> for &ldquo;<?php echo htmlspecialchars($search); ?>&rdquo;</p>
+      <?php endif; ?>
       <?php if (count($events) > 0): ?>
         <div class="events-grid">
           <?php foreach ($events as $event): ?>
@@ -185,8 +224,13 @@ $eventsStmt->close();
         </div>
       <?php else: ?>
         <div class="empty">
-          <p>No events scheduled yet.</p>
-          <p><a href="/organizers/">Become an organizer →</a></p>
+          <?php if ($search !== ''): ?>
+            <p>No events match &ldquo;<?php echo htmlspecialchars($search); ?>&rdquo;.</p>
+            <p><a href="/events/">Clear search →</a></p>
+          <?php else: ?>
+            <p>No events scheduled yet.</p>
+            <p><a href="/organizers/">Become an organizer →</a></p>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
     </div>
