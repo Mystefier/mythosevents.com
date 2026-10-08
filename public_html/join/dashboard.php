@@ -46,6 +46,24 @@ foreach ($assets as $a) {
     if ($a['type'] === 'Venue') { $hasVenueAsset = true; break; }
 }
 $needsVenueNudge = $hasVenueRole && !$hasVenueAsset;
+
+$isApproved = ($person['application_status'] ?? 'approved') === 'approved';
+$myEvents = [];
+if ($isApproved) {
+    include('logintodatabase.php');
+    $eventsStmt = $conn->prepare("
+        SELECT e.id, e.title, e.status,
+               (SELECT COUNT(*) FROM event_occurrences o WHERE o.event_id = e.id) AS occurrence_count
+        FROM events e
+        WHERE e.organizer_id = ?
+        ORDER BY e.created_at DESC
+    ");
+    $eventsStmt->bind_param("i", $personId);
+    $eventsStmt->execute();
+    $myEvents = $eventsStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $eventsStmt->close();
+    $conn->close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -235,6 +253,33 @@ $needsVenueNudge = $hasVenueRole && !$hasVenueAsset;
       <a href="add-asset.php" class="btn btn-primary">Add Asset</a>
     </div>
   </div>
+
+  <?php if ($isApproved): ?>
+  <div class="card">
+    <h2>Your Events</h2>
+    <?php if ($myEvents): ?>
+      <?php foreach ($myEvents as $ev): ?>
+        <div class="info-row">
+          <span class="info-label"><?php echo htmlspecialchars($ev['title']); ?></span>
+          <span class="info-value">
+            <span class="role-tag"><?php echo htmlspecialchars(str_replace('_', ' ', $ev['status'])); ?></span>
+            <?php if ($ev['status'] === 'approved'): ?>
+              &nbsp;<a href="/organizers/schedule.php?event_id=<?php echo (int)$ev['id']; ?>" style="font-size:12px;color:var(--purple-lt);">Schedule a date (<?php echo (int)$ev['occurrence_count']; ?>)</a>
+            <?php endif; ?>
+          </span>
+        </div>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <p style="font-size: 13px; color: var(--muted);">You haven't created any events yet. Post something and we'll review it before it goes live.</p>
+    <?php endif; ?>
+    <div class="btn-row" style="margin-top: 24px;">
+      <a href="/organizers/post.php" class="btn btn-primary">Create Event</a>
+      <?php if ($myEvents): ?>
+        <a href="/organizers/schedule.php" class="btn btn-secondary">Schedule a Date</a>
+      <?php endif; ?>
+    </div>
+  </div>
+  <?php endif; ?>
 
   <div class="card">
     <h2>Your Referral Link</h2>
