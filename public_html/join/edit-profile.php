@@ -237,6 +237,14 @@ $selectedRoles = $person['roles'] ? array_map('trim', explode(',', $person['role
       </div>
 
       <div class="form-section">
+        <div class="section-label">Talent Directory</div>
+        <label class="checkbox-item" style="align-items: flex-start;">
+          <input type="checkbox" name="directoryOptIn" value="1" <?php echo $person['directory_opt_in'] ? 'checked' : ''; ?> style="margin-top: 3px;">
+          <span>List me in the public Talent Directory, so organizers and venues can search for and contact me. This shows your name, roles, bio, location, website, and email on a page anyone can browse.</span>
+        </label>
+      </div>
+
+      <div class="form-section">
         <div class="section-label">Change Password</div>
         <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Leave both blank to keep your current password.</p>
         <div class="row-2">

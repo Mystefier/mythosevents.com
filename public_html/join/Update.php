@@ -22,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = isset($_POST["description"]) ? $_POST["description"] : '';
     $website = isset($_POST["website"]) ? $_POST["website"] : '';
     $roles = isset($_POST["roles"]) ? implode(", ", $_POST["roles"]) : '';
+    $directoryOptIn = isset($_POST["directoryOptIn"]) ? 1 : 0;
 
     // No address means no restriction (worldwide) — don't store a radius with nothing to center it on
     $serviceAreaAddress = isset($_POST["serviceAreaAddress"]) ? trim($_POST["serviceAreaAddress"]) : '';
@@ -72,23 +73,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $status = $passwordError;
     } else {
         if ($newHashedPassword !== null) {
-            $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ?, password = ?, salt = ? WHERE id = ?";
+            $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ?, directory_opt_in = ?, password = ?, salt = ? WHERE id = ?";
             $stmt = mysqli_prepare($conn, $updateSql);
             mysqli_stmt_bind_param(
                 $stmt,
-                "sssssssssddisssi",
+                "sssssssssddisissi",
                 $firstName, $lastName, $phoneNumber, $dob, $message, $roles, $description, $website,
                 $serviceAreaAddress, $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType,
-                $newHashedPassword, $newSalt, $personId
+                $directoryOptIn, $newHashedPassword, $newSalt, $personId
             );
         } else {
-            $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ? WHERE id = ?";
+            $updateSql = "UPDATE people SET first = ?, last = ?, phone = ?, dob = ?, message = ?, roles = ?, description = ?, website = ?, service_area_address = ?, service_area_latitude = ?, service_area_longitude = ?, service_area_radius_miles = ?, involvement_type = ?, directory_opt_in = ? WHERE id = ?";
             $stmt = mysqli_prepare($conn, $updateSql);
             mysqli_stmt_bind_param(
                 $stmt,
-                "sssssssssddisi",
+                "sssssssssddisii",
                 $firstName, $lastName, $phoneNumber, $dob, $message, $roles, $description, $website,
-                $serviceAreaAddress, $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType, $personId
+                $serviceAreaAddress, $serviceAreaLatitude, $serviceAreaLongitude, $serviceAreaRadius, $involvementType, $directoryOptIn, $personId
             );
         }
 

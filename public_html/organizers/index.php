@@ -253,6 +253,7 @@ if (isset($_SESSION['person_id'])) {
         <a href="/join/" class="btn-primary">Become an Organizer ✦</a>
       <?php endif; ?>
       <a href="/events/" class="btn-primary" style="margin-left: 12px; background: var(--purple-dim); border: 1px solid var(--purple); color: var(--white);">View Events</a>
+      <a href="/directory/" class="btn-primary" style="margin-left: 12px; background: var(--purple-dim); border: 1px solid var(--purple); color: var(--white);">Find Talent</a>
     </div>
   </div>
 
