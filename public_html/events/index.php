@@ -218,6 +218,7 @@ $eventsStmt->close();
                 <?php if ($event['contact_email']): ?>
                   <a href="mailto:<?php echo htmlspecialchars($event['contact_email']); ?>" class="event-link event-link-secondary">CONTACT</a>
                 <?php endif; ?>
+                <a href="/events/print.php?occurrence_id=<?php echo (int)$event['occurrence_id']; ?>" target="_blank" class="event-link event-link-secondary">🖨 FLYER</a>
               </div>
             </div>
           <?php endforeach; ?>

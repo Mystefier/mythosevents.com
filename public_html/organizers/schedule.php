@@ -313,7 +313,10 @@ $peatix_url_val = htmlspecialchars($_POST['peatix_url'] ?? '');
               if ($o['location']) echo ' — ' . htmlspecialchars($o['location']);
               ?>
             </div>
-            <div class="occ-status"><?php echo htmlspecialchars($o['status']); ?></div>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="occ-status"><?php echo htmlspecialchars($o['status']); ?></div>
+              <a href="/events/print.php?occurrence_id=<?php echo (int)$o['id']; ?>" style="font-size:11px;color:var(--purple-lt);text-decoration:none;" target="_blank">🖨 Materials</a>
+            </div>
           </div>
         <?php endforeach; ?>
       </div>
