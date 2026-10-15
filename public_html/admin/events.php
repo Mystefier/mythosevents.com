@@ -9,13 +9,13 @@ if (!isset($_SESSION['person_id'])) {
 }
 
 $user_id = (int)$_SESSION['person_id'];
-$userStmt = $conn->prepare("SELECT id, first, email FROM people WHERE id = ? AND email LIKE '%@mythosevents.com'");
+$userStmt = $conn->prepare("SELECT id, first, email, is_admin FROM people WHERE id = ?");
 $userStmt->bind_param("i", $user_id);
 $userStmt->execute();
 $user = $userStmt->get_result()->fetch_assoc();
 $userStmt->close();
 
-if (!$user) {
+if (!$user || !$user['is_admin']) {
     http_response_code(403);
     die('Admin access only.');
 }
