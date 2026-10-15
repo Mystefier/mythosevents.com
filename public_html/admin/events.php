@@ -21,10 +21,10 @@ if (!$user || !$user['is_admin']) {
 }
 
 $message = '';
-$action = $_GET['action'] ?? '';
-$event_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$event_id = isset($_POST['event_id']) ? (int)$_POST['event_id'] : 0;
 
-// Handle approval/rejection
+// Handle approval/rejection — both the Approve button and the Reject modal
+// submit event_id in the POST body, not as a query-string id.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $event_id) {
     $status = $_POST['status'] ?? '';
     $rejection_reason = trim($_POST['rejection_reason'] ?? '');
