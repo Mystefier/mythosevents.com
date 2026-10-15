@@ -202,6 +202,7 @@ mysqli_close($conn);
   <a href="/" class="nav-logo">Mythos<span>✦</span>Events</a>
   <div class="nav-links">
     <a href="dashboard.php">My Dashboard</a>
+    <a href="/admin/events.php">Event Moderation</a>
     <a href="logout.php">Log Out</a>
   </div>
 </nav>

@@ -31,12 +31,19 @@ live. The pieces:
 
 - `organizers/post.php` — submission form. Requires a logged-in user whose
   `application_status` is `approved`; submits with status `pending_approval`.
-- `admin/events.php` — moderation panel. Restricted to `@mythosevents.com` email
-  addresses. Pending / Approved / Rejected tabs, approve in one click, reject with an
-  optional reason.
+- `admin/events.php` — moderation panel. Gated on `people.is_admin = 1` (same flag as
+  `join/admin.php`, the people-approval panel) — **not** an email-domain check. That
+  used to be an `@mythosevents.com` email match, which locked Wade's own everyday
+  login out; fixed 2026-10-14. The two admin panels live at different paths
+  (`/join/admin.php` for people, `/admin/events.php` for events) and are now
+  cross-linked in both panels' nav and on the main dashboard — don't assume one links
+  to the other without checking, that gap is exactly what caused the original
+  confusion.
 - `events/index.php` — public listing. Shows `approved` events only, soonest first.
-- `organizers/index.php` — shows a dashboard block with a POST AN EVENT button to
-  approved organizers.
+- `organizers/index.php` and `join/dashboard.php` — both show a Create Event /
+  Schedule a Date entry point to approved organizers; `join/dashboard.php` is the one
+  people actually land on after login, so new organizer-facing links belong there
+  first.
 
 The `events` table is created by `events_migration_runner.php`, which is a one-time
 script guarded by a key in the query string. **It should be deleted from the server

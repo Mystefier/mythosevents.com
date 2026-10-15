@@ -201,8 +201,9 @@ $rejectedStmt->close();
 
 <nav>
   <a href="/" class="nav-logo">Mythos<span>✦</span>Events</a>
-  <a href="/admin/events.php" class="nav-link">Events</a>
-  <a href="/join/account" class="nav-link">Account</a>
+  <a href="/admin/events.php" class="nav-link">Event Moderation</a>
+  <a href="/join/admin.php" class="nav-link">People Moderation</a>
+  <a href="/join/dashboard.php" class="nav-link">My Dashboard</a>
 </nav>
 
 <div class="container">

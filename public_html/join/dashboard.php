@@ -175,7 +175,7 @@ if ($isApproved) {
   <a href="/" class="nav-logo">Mythos<span>✦</span>Events</a>
   <div class="nav-links">
     <a href="/">Home</a>
-    <?php if (!empty($person['is_admin'])): ?><a href="admin.php">Admin</a><?php endif; ?>
+    <?php if (!empty($person['is_admin'])): ?><a href="admin.php">People Admin</a> <a href="/admin/events.php">Event Admin</a><?php endif; ?>
     <a href="logout.php">Log Out</a>
   </div>
 </nav>
