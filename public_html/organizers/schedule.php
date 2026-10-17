@@ -244,7 +244,7 @@ $peatix_url_val = htmlspecialchars($_POST['peatix_url'] ?? '');
   <?php else: ?>
     <div class="event-pill"><?php echo htmlspecialchars($event['event_type'] ?: 'EVENT'); ?></div>
     <h1>Schedule: <?php echo htmlspecialchars($event['title']); ?></h1>
-    <p>Add the date, place, and directions for this occurrence. It goes live on the public events page as soon as you submit — no extra approval needed.</p>
+    <p>Add the date, place, and directions for this occurrence. It goes live on the public events page as soon as you submit — no extra approval needed. Need to change the title, description, or cover image instead? <a href="/organizers/edit-event.php?event_id=<?php echo (int)$event_id; ?>" style="color:var(--purple-lt);">Edit the event →</a></p>
 
     <?php if ($error): ?>
       <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>

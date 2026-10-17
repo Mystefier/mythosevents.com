@@ -266,6 +266,7 @@ if ($isApproved) {
             <?php if ($ev['status'] === 'approved'): ?>
               &nbsp;<a href="/organizers/schedule.php?event_id=<?php echo (int)$ev['id']; ?>" style="font-size:12px;color:var(--purple-lt);">Schedule a date (<?php echo (int)$ev['occurrence_count']; ?>)</a>
             <?php endif; ?>
+            &nbsp;<a href="/organizers/edit-event.php?event_id=<?php echo (int)$ev['id']; ?>" style="font-size:12px;color:var(--purple-lt);">Edit</a>
           </span>
         </div>
       <?php endforeach; ?>
