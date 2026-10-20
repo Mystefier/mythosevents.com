@@ -280,6 +280,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
   </div>
 
+  <div class="how-section">
+    <div class="how-wrap">
+      <div class="section-title">How We'd Structure It</div>
+      <p style="text-align: center; color: var(--muted); max-width: 640px; margin: -20px auto 40px; font-size: 15px;">No flat rental fee required. We're flexible on structure — here's where we usually start the conversation.</p>
+      <div class="value-grid">
+        <div class="value-card">
+          <div class="value-icon">🎟️</div>
+          <h3>We Collect at the Door</h3>
+          <p>We sell and collect tickets ourselves — no cash handling or box office work on your end.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🚧</div>
+          <h3>A Reserved Section</h3>
+          <p>We set aside a section of your space for ticket holders, so the event stays distinct from your regular crowd.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🤝</div>
+          <h3>A Cut of Concessions</h3>
+          <p>Instead of a flat fee, we take an agreed percentage of concession sales during the event.</p>
+        </div>
+      </div>
+      <p style="text-align: center; color: var(--muted); max-width: 640px; margin: 36px auto 0; font-size: 14px; font-style: italic;">These are starting points, not fixed terms — if you have a structure that works better for your space, we're glad to talk through it.</p>
+    </div>
+  </div>
+
   <div class="form-section">
     <div class="form-wrap">
       <div class="section-title">Get in Touch</div>
